@@ -1,0 +1,11 @@
+[Desktop Entry]
+
+Name=Valoro
+GenericName=Personal Cryptoasset Tracking Tool
+Comment=A tool that helps user to manage and track operations with their own cryptoassets by logging the data related to the different operations.
+Categories=Utility;Money;
+Exec=com.felixbrezo.Valoro
+Icon=archive-manager
+Terminal=false
+Type=Application
+Keywords=Cryptocurrencies;Assets;Money;Personal

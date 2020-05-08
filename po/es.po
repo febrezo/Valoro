@@ -1,0 +1,58 @@
+# Spanish translations for com.felixbrezo.Valoro package.
+# Copyright (C) 2020 THE com.felixbrezo.Valoro'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the com.felixbrezo.Valoro package.
+# Automatically generated, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: com.felixbrezo.Valoro\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-07 17:01+0200\n"
+"PO-Revision-Date: 2020-05-07 17:01+0200\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/Application.vala:36 data/com.felixbrezo.Valoro.desktop.in:4
+#: data/com.felixbrezo.Valoro.appdata.xml.in:6
+msgid "Valoro"
+msgstr ""
+
+#: src/Application.vala:38
+msgid "Welcome to Valoro"
+msgstr ""
+
+#: data/com.felixbrezo.Valoro.desktop.in:5
+msgid "Personal Cryptoasset Tracking Tool"
+msgstr ""
+
+#: data/com.felixbrezo.Valoro.desktop.in:6
+msgid ""
+"A tool that helps user to manage and track operations with their own "
+"cryptoassets by logging the data related to the different operations."
+msgstr ""
+
+#: data/com.felixbrezo.Valoro.desktop.in:9
+msgid "application-default-icon"
+msgstr ""
+
+#: data/com.felixbrezo.Valoro.desktop.in:12
+msgid "Cryptocurrencies;Assets;Money;Personal"
+msgstr ""
+
+#: data/com.felixbrezo.Valoro.appdata.xml.in:7
+msgid "A tool to manage and track your cryptoassets"
+msgstr ""
+
+#: data/com.felixbrezo.Valoro.appdata.xml.in:9
+msgid ""
+"This tool will help you on tracking the operations performed using "
+"cryptocurrencies so as to provide validad and accurate insights regarding "
+"the acquisition and selling price of cryptocurrencies. This task is "
+"particularly tricky when involving exchange of cryptocurrencies from "
+"different assets."
+msgstr ""

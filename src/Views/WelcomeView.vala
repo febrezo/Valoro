@@ -19,33 +19,45 @@
 * Authored by: Félix Breo <felixbrezo@disroot.orgm>
 */
 
-public class WelcomeView : Gtk.Grid {
-    construct {
-        var welcome = new Granite.Widgets.Welcome (_("Valoro"), _("A tool to manage and track your cryptoassets"));
-        welcome.append ("document-new", _("Create new ledger"), _("Start a new book to track your operations"));
-        welcome.append ("document-open", _("Open ledger"), _("Work with previously saved ledger files"));
+namespace Valoro {
+    public class WelcomeView : Gtk.Grid {
+        construct {
+            var welcome = new Granite.Widgets.Welcome (_("Valoro"), _("Manage and track your cryptoassets"));
+            welcome.append ("document-new", _("Create new logbook"), _("Start a new logbook to track your operations"));
+            welcome.append ("document-open", _("Open logbook"), _("Work with previously saved logbook files"));
+            welcome.append ("info", _("Looking for help?"), _("Get support from online resources"));
 
-        add (welcome);
+            add (welcome);
 
-        welcome.activated.connect ((index) => {
-            switch (index) {
-                case 0:
-                    try {
-                        AppInfo.launch_default_for_uri ("https://valadoc.org/granite/Granite.html", null);
-                    } catch (Error e) {
-                        warning (e.message);
-                    }
+            welcome.activated.connect ((index) => {
+                switch (index) {
+                    case 0:
+                        try {
+                            AppInfo.launch_default_for_uri ("https://valadoc.org/granite/Granite.html", null);
+                        } catch (Error e) {
+                            warning (e.message);
+                        }
 
-                    break;
-                case 1:
-                    try {
-                        AppInfo.launch_default_for_uri ("https://github.com/elementary/granite", null);
-                    } catch (Error e) {
-                        warning (e.message);
-                    }
+                        break;
+                    case 1:
+                        try {
+                            AppInfo.launch_default_for_uri ("https://github.com/elementary/granite", null);
+                        } catch (Error e) {
+                            warning (e.message);
+                        }
 
-                    break;
-            }
-        });
+                        break;
+                    case 2:
+                        try {
+                            AppInfo.launch_default_for_uri (_("https://github.com/febrezo/valoro/master/doc/support/en/"), null);
+                        } catch (Error e) {
+                            warning (e.message);
+                        }
+
+                        break;
+                }
+            });
+
+        }
     }
 }

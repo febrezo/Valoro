@@ -1,3 +1,6 @@
 src/Application.vala
+src/Window.vala
+src/Views/WelcomeView.vala
+src/Widgets/SettingsMenu.vala
 data/com.felixbrezo.Valoro.desktop.in
 data/com.felixbrezo.Valoro.appdata.xml.in

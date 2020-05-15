@@ -1,7 +1,7 @@
 # project name and programming language
 project('com.felixbrezo.Valoro', 'vala', 'c')
 
-# Include the translations module 
+# Include the translations module
 i18n = import('i18n')
 
 # Set our translation domain
@@ -12,10 +12,17 @@ executable(
   meson.project_name(),
   'src/Application.vala',
   'src/Window.vala',
+  'src/Utils/Asset.vala',
+  'src/Utils/Operation.vala',
   'src/Views/WelcomeView.vala',
+  'src/Views/MainView.vala',
+  'src/Widgets/AssetPanel.vala',
+  'src/Widgets/OperationsTable.vala',
+  'src/Widgets/SettingsMenu.vala',
   dependencies: [
-    #dependency('gtk+-3.0')
-    dependency('granite')
+    dependency('granite'),
+    dependency('json-glib-1.0'),
+    dependency('gee-0.8')
   ],
   install: true
 )

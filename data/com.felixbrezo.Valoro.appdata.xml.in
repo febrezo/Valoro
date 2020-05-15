@@ -4,9 +4,9 @@
   <id>com.felixbrezo.Valoro</id>
   <metadata_license>GPLv3</metadata_license>
   <name>Valoro</name>
-  <summary>A tool to manage and track your cryptoassets</summary>
+  <summary>Manage and track your cryptoassets</summary>
   <description>
-    <p>This tool will help you on tracking the operations performed using cryptocurrencies so as to provide validad and accurate insights regarding the acquisition and selling price of cryptocurrencies. This task is particularly tricky when involving exchange of cryptocurrencies from different assets.</p>
+    <p>Valoro helps you on tracking the operations performed using cryptocurrencies in terms of acquisition and selling price. This task is particularly tricky when involving exchange of cryptocurrencies from different assets if you want to fully comply with tax regulations.</p>
   </description>
   <custom>
     <value key="x-appcenter-color-primary">#603461</value>

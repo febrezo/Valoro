@@ -3,7 +3,7 @@
 
 package AppUtils {
     class Asset {
-        +string name 
+        +string name
         +string short_name
         +string type
         +double units
@@ -22,7 +22,7 @@ package AppUtils {
         +Operation.from_splitted_datetime_string ()
         +Operation.from_datetime_string ()
     }
-    
+
     class OperationCorrupted {
         +CODE_01
     }
@@ -30,10 +30,9 @@ package AppUtils {
 
 package AppWidgets {
     class SettingsMenu <<  (U,orchid) >> extends Gtk.Popover {
-        SettingsMenu ()
-        -on_help_clicked ()
+        +SettingsMenu ()
     }
-    
+
     enum Column {
 		DATETIME
 	    SOURCE_ASSET
@@ -42,7 +41,7 @@ package AppWidgets {
 	    DESTINY_QTY
 	    NORMALIZED_QTY
     }
-    
+
     class OperationsTable << (U,orchid) >> extends Gtk.Grid {
         -Array<Operation> operations
         +Gtk.Label title_label
@@ -55,20 +54,25 @@ package AppWidgets {
     }
 
     class AssetPanel << (U,orchid) >> extends Granite.Widgets.SourceList {
-        -Array<Asset> assets
-        -Granite.Widgets.SourceList.ExpandableItem currency_category
-        -Granite.Widgets.SourceList.ExpandableItem cryptoasset_category
         +AssetPanel ()
-        +update_asset_list ()
     }
 
+    class HeaderBar << (U,orchid) >> extends Gtk.HeaderBar {
+        +Gtk.Button new_btn
+        +Gtk.Button open_btn
+        +Gtk.Button save_btn
+        +Gtk.Button add_asset_btn
+        +Gtk.Button add_operation_btn
+        +Settings settings_menu_btn
+        +HeaderBar ()
+    }
 }
 
 package AppViews {
     class WelcomeView << (U,orchid) >> extends Gtk.Grid {
         +WelcomeView ()
     }
-    
+
     class MainView << (U,orchid) >> extends Gtk.Frame {
         -AssetPanel asset_panel
         -OperationsTable operations_table
@@ -81,22 +85,22 @@ package AppViews {
 package Valoro {
     class Window << (U,orchid) >> extends Gtk.ApplicationWindow {
         -string file_path
-        #Array<Asset> assets
-        #Array<Operation> operations
+        #Gee.ArrayList<Asset> assets
+        #Gee.ArrayList<Operation> operations
         -MainView main_view
-        -SettingsMenu menu
         -WelcomeView welcome_view
         -Granite.Widgets.Toast toast
-        -Gtk.HeaderBar header_bar
-        -Gtk.Button save_btn
-        -Gtk.Button add_operation_btn
+        -HeaderBar header_bar
+        -SettingsMenu menu
         +Window ()
-        -on_menu_clicked ()
         -on_new_clicked ()
+        -on_open_clicked ()
+        -on_save_clicked ()
+        -on_add_asset_clicked ()
         -on_add_operation_clicked ()
-        -_deploy_main_layout ()
+        -on_help_clicked ()
     }
-    
+
     class ValoroApp extends Gtk.Application {
         +ValoroApp ()
         #activate ()
@@ -105,15 +109,14 @@ package Valoro {
 }
 
 Operation - OperationCorrupted : throws >
-OperationsTable "1" *-- "many" Operation : contains >
 Window "1" *-- "many" Operation : contains >
 OperationsTable - Column : uses >
 MainView *-- AssetPanel : uses >
 MainView *-- OperationsTable : uses >
-AssetPanel "1" *-- "many" Asset : contains >
 Window "1" *-- "many" Asset : contains >
+HeaderBar *-- SettingsMenu : < composes
+Window *-- HeaderBar : < composes
 Window *-- MainView : uses >
-Window *-- SettingsMenu : uses >
 Window *-- WelcomeView : uses >
 ValoroApp - Window : uses >
 

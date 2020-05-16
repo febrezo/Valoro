@@ -29,18 +29,16 @@ namespace AppViews {
         public Gtk.Label label;
         public Gtk.TreeView view;
 
-        ArrayList<Operation> operations;
-
         enum Column {
-                DATETIME,
-                SOURCE_ASSET,
-                SOURCE_QTY,
-                DESTINY_ASSET,
-                DESTINY_QTY,
-                NORMALIZED_QTY
+            DATETIME,
+            SOURCE_ASSET,
+            SOURCE_QTY,
+            DESTINY_ASSET,
+            DESTINY_QTY,
+            NORMALIZED_QTY
         }
 
-        construct {
+        public OperationsTable (ArrayList<Operation> operations) {
             label = new Gtk.Label ("");
             view = new Gtk.TreeView ();
             view.set_reorderable (true);
@@ -62,10 +60,8 @@ namespace AppViews {
             selection.changed.connect (this.on_changed);
         }
 
-        public void setup_treeview (Gee.ArrayList<Operation> ops) {
-            // Update the local representation
-            operations = ops;
-
+        private void setup_treeview (Gee.ArrayList<Operation> operations) {
+            // Create liststore
             var listmodel = new Gtk.ListStore (
                 6,
                 typeof (string),
@@ -111,22 +107,23 @@ namespace AppViews {
                                                     new Gtk.CellRendererText (),
                                                     "text", Column.NORMALIZED_QTY);
 
-            /* Insert the phonebook into the ListStore */
+            /* Insert the items into the ListStore */
             Gtk.TreeIter iter;
             for (int i = 0; i < operations.size; i++) {
-                    listmodel.append (out iter);
+                listmodel.append (out iter);
 
-                    listmodel.set (
-                            iter,
-                            Column.DATETIME, operations.get (i).datetime.to_string (),
-                            Column.SOURCE_ASSET, operations.get (i).source_asset,
-                            Column.SOURCE_QTY, operations.get (i).source_qty,
-                            Column.DESTINY_ASSET, operations.get (i).destiny_asset,
-                            Column.DESTINY_QTY, operations.get (i).destiny_qty,
-                            Column.NORMALIZED_QTY, operations.get (i).normalized_qty
+                listmodel.set (
+                    iter,
+                    Column.DATETIME, operations.get (i).datetime.to_string (),
+                    Column.SOURCE_ASSET, operations.get (i).source_asset,
+                    Column.SOURCE_QTY, operations.get (i).source_qty,
+                    Column.DESTINY_ASSET, operations.get (i).destiny_asset,
+                    Column.DESTINY_QTY, operations.get (i).destiny_qty,
+                    Column.NORMALIZED_QTY, operations.get (i).normalized_qty
                 );
             }
         }
+
         private void on_changed () {
             // TODO
         }

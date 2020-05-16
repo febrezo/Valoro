@@ -17,6 +17,7 @@ executable(
   'src/Views/WelcomeView.vala',
   'src/Views/MainView.vala',
   'src/Widgets/AssetPanel.vala',
+  'src/Widgets/HeaderBar.vala',
   'src/Widgets/OperationsTable.vala',
   'src/Widgets/SettingsMenu.vala',
   dependencies: [

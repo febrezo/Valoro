@@ -25,59 +25,37 @@ using AppUtils;
 using AppWidgets;
 
 namespace AppViews {
-	public class MainView : Gtk.Frame {
-		private AssetPanel asset_panel;
-		private Granite.Widgets.SourceList.ExpandableItem currency_category;
-		private Granite.Widgets.SourceList.ExpandableItem cryptoasset_category;
+    public class MainView : Gtk.Frame {
+        private Gtk.Stack stack;
 
-		private Gtk.Stack stack;
-		private OperationsTable operations_table;
-		private Gtk.Label message_label;
+        public MainView (ArrayList<Asset> assets, ArrayList<Operation> operations) {
+            // Define the stack
+            stack = new Gtk.Stack ();
+            stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
+        
+            var asset_panel = new AssetPanel (assets);
+            var operations_table = new OperationsTable (operations);
 
-		construct {
-				// Define the stack
-				stack = new Gtk.Stack ();
-				stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
-				
-				// Main widgets
-				operations_table = new OperationsTable ();
-				asset_panel = new AssetPanel ();
-				message_label = new Gtk.Label (_("No operations loaded."));
+            if (operations.size > 0) {
+                stack.add_named (operations_table, _("Lista of operations"));
+            } else {
+                stack.add_named (
+                    new Gtk.Label (_("No operations loaded.")), 
+                    _("List of operations")
+                );
+            }
 
-		    /*asset_panel.item_selected.connect ((item) => {
-		        if (item == null) {
-		            label.label = "No selected item";
-		            return;
-		        }
+            // Building the pane
+            var paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
+            paned.position = 130;
+            paned.pack1 (asset_panel, false, false);
+            paned.add2 (stack);
 
-		        /*if (item.badge != "" && item.badge != null) {
-		            item.badge = "";
-		        }
+            margin = 24;
 
-		        label.label = "%s - %s".printf (item.parent.name, item.name);
-		    });*/
-		}
-
-		// Actions
-		// =======
-		public void update_data (ArrayList<Asset> assets, ArrayList<Operation> operations) {
-				asset_panel.update_asset_list (assets);
-				operations_table.setup_treeview (operations);
-
-				if (operations.size > 0) {
-						stack.add_named (operations_table, _("Lista of operations"));
-				} else {
-						stack.add_named (message_label, _("List of operations"));
-				}
-
-				// Building the pane
-		    var paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
-		    paned.position = 130;
-		    paned.pack1 (asset_panel, false, false);
-		    paned.add2 (stack);
-
-		    margin = 24;
-		    add (paned);
-		}
-	}
+            // Empty the element and update
+            this.foreach ((element) => this.remove (element));
+            add (paned);
+        }
+    }
 }

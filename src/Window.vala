@@ -32,15 +32,13 @@ namespace Valoro {
         ArrayList<Operation> operations;
         ArrayList<Asset> assets;
 
-        private MainView main_view;
-        private SettingsMenu menu;
-        private WelcomeView welcome_view;
-
+        // Window elements
+        private HeaderBar header_bar;
         private Granite.Widgets.Toast toast;
-        private Gtk.HeaderBar header_bar;
-        private Gtk.Button save_btn;
-        private Gtk.Button add_operation_btn;
-        private Gtk.Button add_asset_btn;
+        
+        // Views
+        private MainView main_view;
+        private WelcomeView welcome_view;
 
         enum Column {
             ASSET_NAME,
@@ -55,87 +53,28 @@ namespace Valoro {
         }
 
         construct {
+            // Set Windows defaults
+            // --------------------
             this.default_height = 600;
             this.default_width = 800;
-
-            this.toast = new Granite.Widgets.Toast ("Valoro");
-
-            this.menu = new SettingsMenu ();
+            this.header_bar = new HeaderBar ();
 
             // Define views
             // ------------
             welcome_view = new WelcomeView ();
-            main_view = new MainView ();
 
-            // Define menus
-            // ------------
-
-            // Gtk Settings
-            var granite_settings = Granite.Settings.get_default ();
-            var gtk_settings = Gtk.Settings.get_default ();
-
-            // Gtk Settings
-            gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
-            granite_settings.notify["prefers-color-scheme"].connect (() => {
-                gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
-            });
-
-            // Define the header
-            // -----------------
-            header_bar = new Gtk.HeaderBar ();
-            header_bar.show_close_button = true;
-            header_bar.title = _("Valoro");
-
-            // New button
-            var new_btn = new Gtk.Button.from_icon_name ("document-new", Gtk.IconSize.LARGE_TOOLBAR);
-            new_btn.tooltip_text = _("Create new logbook");
-            new_btn.clicked.connect (on_new_clicked);
-            header_bar.pack_start (new_btn);
-
-            // Open button
-            var open_btn = new Gtk.Button.from_icon_name ("document-open", Gtk.IconSize.LARGE_TOOLBAR);
-            open_btn.tooltip_text = _("Open logbook");
-            open_btn.clicked.connect (on_open_clicked);
-            header_bar.pack_start (open_btn);
-
-            // Save button
-            save_btn = new Gtk.Button.from_icon_name ("document-save", Gtk.IconSize.LARGE_TOOLBAR);
-            save_btn.tooltip_text = _("Save logbook");
-            save_btn.set_sensitive (false);
-            header_bar.pack_start (save_btn);
-
-            // Menu button
-            var settings_menu_btn = new Gtk.Button.from_icon_name ("open-menu-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
-            settings_menu_btn.tooltip_text = _("Open menu");
-            settings_menu_btn.clicked.connect (on_menu_clicked);
-            header_bar.pack_end (settings_menu_btn);
-
-            // Add operation button
-            add_operation_btn = new Gtk.Button.from_icon_name ("event-new", Gtk.IconSize.LARGE_TOOLBAR);
-            settings_menu_btn.tooltip_text = _("Add new operation");
-            add_operation_btn.clicked.connect (on_add_operation_clicked);
-            add_operation_btn.set_sensitive (false);
-            header_bar.pack_end (add_operation_btn);
-
-            // Add asset button
-            add_asset_btn = new Gtk.Button.from_icon_name ("application-vnd.openxmlformats-officedocument.presentationml.presentation", Gtk.IconSize.LARGE_TOOLBAR);
-            settings_menu_btn.tooltip_text = _("Add new asset");
-            add_asset_btn.clicked.connect (on_add_asset_clicked);
-            add_asset_btn.set_sensitive (false);
-            header_bar.pack_end (add_asset_btn);
+            // Define header events
+            // --------------------
+            this.header_bar.add_asset_btn.clicked.connect (on_add_asset_clicked);
+            this.header_bar.add_operation_btn.clicked.connect (on_add_operation_clicked);
+            this.header_bar.new_btn.clicked.connect (on_new_clicked);
+            this.header_bar.open_btn.clicked.connect (on_open_clicked);
+            this.header_bar.settings_menu_btn.clicked.connect (on_menu_clicked);
 
             // Pack things
             // -----------
             this.set_titlebar(header_bar);
-            var overlay_panel = new Gtk.Overlay ();
-            overlay_panel.add_overlay (main_view);
-            overlay_panel.add_overlay (toast);
-            this.add (overlay_panel);
-        }
-
-        private void on_menu_clicked (Gtk.Button sender) {
-            this.menu.set_relative_to (sender);
-            this.menu.show_all ();
+            this.add (welcome_view);
         }
 
         // Events
@@ -148,9 +87,9 @@ namespace Valoro {
             assets.add (euro);
 
             // Activate save, export and new operation buttons
-            this.save_btn.set_sensitive (true);
-            this.add_operation_btn.set_sensitive (true);
-            this.add_asset_btn.set_sensitive (true);
+            this.header_bar.save_btn.set_sensitive (true);
+            this.header_bar.add_operation_btn.set_sensitive (true);
+            this.header_bar.add_asset_btn.set_sensitive (true);
         }
 
         private void on_open_clicked () {
@@ -187,10 +126,13 @@ namespace Valoro {
                         var asset_object = node.get_object ();
 
                         // Grab values
-                        var name = asset_object.get_string_member ("name");
-                        var short_name = asset_object.get_string_member ("short_name");
-                        var type = asset_object.get_string_member ("type");
-                        var tmp_asset = new Asset (name, short_name, type, 0.0, 0.0);
+                        var tmp_asset = new Asset (
+                            asset_object.get_string_member ("name"),
+                            asset_object.get_string_member ("short_name"),
+                            asset_object.get_string_member ("type"),
+                            asset_object.get_double_member ("units"),
+                            asset_object.get_double_member ("average_price")
+                        );
 
                         assets.add (tmp_asset);
                     }
@@ -227,9 +169,6 @@ namespace Valoro {
                         }
                     }
 
-                    // Call _deploy_main_layout with some data
-                    main_view.update_data (assets, operations);
-
                     // Notify correctly the reading of the file
                     this.file_path = path;
                     header_bar.subtitle = this.file_path;
@@ -248,9 +187,11 @@ namespace Valoro {
             }
             dialog.close ();
 
+            update_main_view ();
+
             // Activate buttons
-            this.add_asset_btn.set_sensitive (true);
-            this.add_operation_btn.set_sensitive (true);
+            this.header_bar.add_asset_btn.set_sensitive (true);
+            this.header_bar.add_operation_btn.set_sensitive (true);
         }
 
         private void on_save_clicked () {
@@ -328,7 +269,7 @@ namespace Valoro {
             }
 
             // Deactivate save, export and new operation buttons
-            this.save_btn.set_sensitive (false);
+            this.header_bar.save_btn.set_sensitive (false);
         }
 
         private void on_add_operation_clicked () {
@@ -531,9 +472,9 @@ namespace Valoro {
             var category_combobox = new Gtk.ComboBox.with_model (cat_liststore);
 
             // Add the cell representation for  the combobox
-        		var cell = new Gtk.CellRendererText ();
-        		category_combobox.pack_start (cell, false);
-        		category_combobox.set_attributes (cell, "text", 0);
+            var cell = new Gtk.CellRendererText ();
+            category_combobox.pack_start (cell, false);
+            category_combobox.set_attributes (cell, "text", 0);
             category_combobox.set_active (0);
 
             // Pack grid elements together together
@@ -553,11 +494,43 @@ namespace Valoro {
             message_dialog.show_all ();
 
             if (message_dialog.run () == Gtk.ResponseType.ACCEPT) {
+                // Grab values
+                var new_asset = new Asset (
+                    name_text.get_text (),
+                    short_name_text.get_text (),
+                    _("Currency"),
+                    0.0,
+                    0.0
+                );
+                assets.add (new_asset);
+
                 toast.title = _("New asset added.");
                 toast.send_notification ();
             }
 
+            update_main_view ();
+
             message_dialog.destroy ();
+        }
+
+        private void on_menu_clicked (Gtk.Button sender) {
+            this.header_bar.menu.set_relative_to (sender);
+            this.header_bar.menu.show_all ();
+        }
+
+        private void update_main_view () {
+            // Remove elements
+            this.foreach ((element) => {this.remove (element);});
+
+            // Call _deploy_main_layout with some data
+            var main_view = new MainView (assets, operations);
+
+            // Create overlay
+            var overlay_panel = new Gtk.Overlay ();
+            overlay_panel.add_overlay (main_view);
+            overlay_panel.add_overlay (toast);
+
+            this.add (overlay_panel);
         }
     }
 }

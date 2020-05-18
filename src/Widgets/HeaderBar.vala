@@ -22,7 +22,7 @@
 using AppUtils;
 using AppWidgets;
 
-namespace AppViews {
+namespace AppWidgets {
     public class HeaderBar : Gtk.HeaderBar {
         public Gtk.Button new_btn;
         public Gtk.Button open_btn;
@@ -64,8 +64,8 @@ namespace AppViews {
             this.pack_start (open_btn);
 
             // Save button
-            save_btn = new Gtk.Button.from_icon_name ("document-save", Gtk.IconSize.LARGE_TOOLBAR);
-            save_btn.tooltip_text = _("Save logbook");
+            save_btn = new Gtk.Button.from_icon_name ("document-save-as", Gtk.IconSize.LARGE_TOOLBAR);
+            save_btn.tooltip_text = _("Save logbook as…");
             save_btn.set_sensitive (false);
             this.pack_start (save_btn);
 

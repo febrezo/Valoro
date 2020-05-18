@@ -24,25 +24,24 @@ using Gee;
 using AppUtils;
 
 namespace AppWidgets {
-    public class OperationsTable : Gtk.Grid {
-        public Gtk.Label title_label;
-
+    public class AccountingTable : Gtk.Grid {
         public Gtk.TreeView view;
 
         enum Column {
             DATETIME,
-            SOURCE_ASSET,
-            SOURCE_QTY,
-            DESTINY_ASSET,
-            DESTINY_QTY,
-            NORMALIZED_QTY
+            ASSET_ID,
+            ASSET_UNITS,
+            BUYING_PRICE,
+            SELLING_PRICE,
+            BENEFIT_TOTAL,
+            BENEFIT_PERCENTAGE
         }
 
-        public OperationsTable (ArrayList<Operation> operations) {
+        public AccountingTable (ArrayList<AccountingEntry> entries) {
             view = new Gtk.TreeView ();
             view.set_reorderable (true);
             view.set_headers_clickable (true);
-            this.setup_treeview (operations);
+            this.setup_treeview (entries);
 
             //var scrolled_view = new Gtk.ScrolledWindow (null, null);
             //scrolled_view.add (view);
@@ -57,14 +56,15 @@ namespace AppWidgets {
             selection.changed.connect (this.on_changed);
         }
 
-        private void setup_treeview (ArrayList<Operation> operations) {
+        private void setup_treeview (ArrayList<AccountingEntry> entries) {
             // Create liststore
             var listmodel = new Gtk.ListStore (
-                6,
+                7,
                 typeof (string),
                 typeof (string),
                 typeof (float),
-                typeof (string),
+                typeof (float),
+                typeof (float),
                 typeof (float),
                 typeof (float)
             );
@@ -81,42 +81,56 @@ namespace AppWidgets {
 
             // Columns
             view.insert_column_with_attributes (-1, _("Date"),
-                                                    new Gtk.CellRendererText (), "text",
+                                                    new Gtk.CellRendererText (),
+                                                    "text",
                                                     Column.DATETIME);
 
-            view.insert_column_with_attributes (-1, _("Source"),
-                                                    bold_cell, "text",
-                                                    Column.SOURCE_ASSET);
-
-            view.insert_column_with_attributes (-1, _(" "),
+            view.insert_column_with_attributes (-1, _("Asset"),
+                                                    bold_cell,
+                                                    "text",
+                                                    Column.ASSET_ID);
+                                                    
+            view.insert_column_with_attributes (-1, _("Units"),
                                                     new Gtk.CellRendererText (),
-                                                    "text", Column.SOURCE_QTY);
+                                                    "text",
+                                                    Column.BUYING_PRICE);
 
-            view.insert_column_with_attributes (-1, _("Destiny"),
-                                                    bold_cell, "text",
-                                                    Column.DESTINY_ASSET);
 
-            view.insert_column_with_attributes (-1, _(" "),
+            view.insert_column_with_attributes (-1, _("Buying price"),
                                                     new Gtk.CellRendererText (),
-                                                    "text", Column.DESTINY_QTY);
+                                                    "text",
+                                                    Column.BUYING_PRICE);
 
-            view.insert_column_with_attributes (-1, _("Value"),
+            view.insert_column_with_attributes (-1, _("Selling price "),
                                                     new Gtk.CellRendererText (),
-                                                    "text", Column.NORMALIZED_QTY);
+                                                    "text", 
+                                                    Column.SELLING_PRICE);
 
-            // Insert the items into the ListStore
+            view.insert_column_with_attributes (-1, _("Benefit"),
+                                                    bold_cell, 
+                                                    "text",
+                                                    Column.BENEFIT_TOTAL);
+
+            view.insert_column_with_attributes (-1, _("%"),
+                                                    bold_cell, 
+                                                    "text",
+                                                    Column.BENEFIT_PERCENTAGE);
+
+
+            // Insert the items into the ListStore 
             Gtk.TreeIter iter;
-            for (int i = 0; i < operations.size; i++) {
+            for (int i = 0; i < entries.size; i++) {
                 listmodel.append (out iter);
 
                 listmodel.set (
                     iter,
-                    Column.DATETIME, operations.get (i).datetime.to_string (),
-                    Column.SOURCE_ASSET, operations.get (i).source_asset,
-                    Column.SOURCE_QTY, operations.get (i).source_qty,
-                    Column.DESTINY_ASSET, operations.get (i).destiny_asset,
-                    Column.DESTINY_QTY, operations.get (i).destiny_qty,
-                    Column.NORMALIZED_QTY, operations.get (i).normalized_qty
+                    Column.DATETIME, entries.get (i).datetime.to_string (),
+                    Column.ASSET_ID, entries.get (i).asset_id,
+                    Column.ASSET_UNITS, entries.get (i).asset_units,
+                    Column.BUYING_PRICE, entries.get (i).buying_price,
+                    Column.SELLING_PRICE, entries.get (i).selling_price,
+                    Column.BENEFIT_TOTAL, entries.get (i).benefit,
+                    Column.BENEFIT_PERCENTAGE, entries.get (i).benefit / entries.get (i).buying_price * 100.0
                 );
             }
         }

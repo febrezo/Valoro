@@ -25,7 +25,7 @@ namespace AppUtils {
 	}
 
     public class Operation {
-	    	public DateTime datetime;
+	    public DateTime datetime;
         public string source_asset;
         public double source_qty;
         public string destiny_asset;

@@ -20,44 +20,16 @@
 */
 
 namespace Valoro {
-    public class WelcomeView : Gtk.Grid {
+    public class WelcomeView : Granite.Widgets.Welcome {
+        public WelcomeView () {
+            Object ();
+        } 
         construct {
-            var welcome = new Granite.Widgets.Welcome (_("Valoro"), _("Manage and track your cryptoassets"));
-            welcome.append ("document-new", _("Create new logbook"), _("Start a new logbook to track your operations"));
-            welcome.append ("document-open", _("Open logbook"), _("Work with previously saved logbook files"));
-            welcome.append ("info", _("Looking for help?"), _("Get support from online resources"));
-
-            add (welcome);
-
-            welcome.activated.connect ((index) => {
-                switch (index) {
-                    case 0:
-                        try {
-                            AppInfo.launch_default_for_uri ("https://valadoc.org/granite/Granite.html", null);
-                        } catch (Error e) {
-                            warning (e.message);
-                        }
-
-                        break;
-                    case 1:
-                        try {
-                            AppInfo.launch_default_for_uri ("https://github.com/elementary/granite", null);
-                        } catch (Error e) {
-                            warning (e.message);
-                        }
-
-                        break;
-                    case 2:
-                        try {
-                            AppInfo.launch_default_for_uri (_("https://github.com/febrezo/valoro/master/doc/support/en/"), null);
-                        } catch (Error e) {
-                            warning (e.message);
-                        }
-
-                        break;
-                }
-            });
-
+            this.title = _("Valoro");
+            this.subtitle = _("Manage and track your cryptoassets");
+            this.append ("document-new", _("Create new logbook"), _("Start a new logbook to track your operations"));
+            this.append ("document-open", _("Open logbook"), _("Work with previously saved logbook files"));
+            this.append ("info", _("Looking for help?"), _("Get support from online resources"));
         }
     }
 }

@@ -35,15 +35,10 @@ namespace Valoro {
         // Window elements
         private HeaderBar header_bar;
         private Granite.Widgets.Toast toast;
-        
+
         // Views
         private MainView main_view;
         private WelcomeView welcome_view;
-
-        enum Column {
-            ASSET_NAME,
-            CATEGORY_NAME
-        }
 
         // Methods
         // =======
@@ -58,18 +53,23 @@ namespace Valoro {
             this.default_height = 600;
             this.default_width = 800;
             this.header_bar = new HeaderBar ();
+            this.toast = new Granite.Widgets.Toast (_("Valoro"));
 
             // Define views
             // ------------
             welcome_view = new WelcomeView ();
 
-            // Define header events
+            // Define window events
             // --------------------
             this.header_bar.add_asset_btn.clicked.connect (on_add_asset_clicked);
             this.header_bar.add_operation_btn.clicked.connect (on_add_operation_clicked);
             this.header_bar.new_btn.clicked.connect (on_new_clicked);
             this.header_bar.open_btn.clicked.connect (on_open_clicked);
             this.header_bar.settings_menu_btn.clicked.connect (on_menu_clicked);
+            this.welcome_view.activated.connect ((index) => {
+                this.on_welcome_clicked (index);
+            });
+
 
             // Pack things
             // -----------
@@ -79,8 +79,22 @@ namespace Valoro {
 
         // Events
         // ======
+        private void on_welcome_clicked (int index) {
+            switch (index) {
+                case 0:
+                    this.on_new_clicked ();
+                    break;
+                case 1:
+                    this.on_open_clicked ();
+                    break;
+                case 2:
+                    this.on_help_clicked ();
+                    break;
+            }
+        }        
+        
         private void on_new_clicked () {
-            this.header_bar.subtitle = _("Untitled book.json");
+            this.header_bar.subtitle = _("Unsaved logbook");
 
             // Create a new empty currency
             var euro = new Asset ("Euro", "EUR", _("Currency"), 0.0, 0.0);
@@ -90,6 +104,8 @@ namespace Valoro {
             this.header_bar.save_btn.set_sensitive (true);
             this.header_bar.add_operation_btn.set_sensitive (true);
             this.header_bar.add_asset_btn.set_sensitive (true);
+
+            print ("hola");
         }
 
         private void on_open_clicked () {
@@ -172,13 +188,17 @@ namespace Valoro {
                     // Notify correctly the reading of the file
                     this.file_path = path;
                     header_bar.subtitle = this.file_path;
-                    toast.title = "%s assets and %s operations parsed.".printf (
+                    var message = "%s assets and %s operations parsed.".printf (
                         assets.size.to_string (),
                         operations.size.to_string ()
                     );
-                    toast.send_notification ();
+                    show_toast (message);
+                                        
+                    create_main_view ();
 
-                    main_view.show_all ();
+                    // Activate buttons
+                    this.header_bar.add_asset_btn.set_sensitive (true);
+                    this.header_bar.add_operation_btn.set_sensitive (true);
                 } catch (Error e) {
                     stderr.printf ("[*] Something happened with the JSON Parser...\n");
                     toast.title = _("Could not parse the file. '%s' is corrupted. Have you edited it manually?").printf (path);
@@ -186,12 +206,6 @@ namespace Valoro {
                 }
             }
             dialog.close ();
-
-            update_main_view ();
-
-            // Activate buttons
-            this.header_bar.add_asset_btn.set_sensitive (true);
-            this.header_bar.add_operation_btn.set_sensitive (true);
         }
 
         private void on_save_clicked () {
@@ -272,245 +286,36 @@ namespace Valoro {
             this.header_bar.save_btn.set_sensitive (false);
         }
 
-        private void on_add_operation_clicked () {
-            var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
-                _("Add new operation"),
-                _("Introduce the details of the operation you want to register."),
-                "event-new",
-                Gtk.ButtonsType.CANCEL
-            );
-
-            // Populate the list of assets
-            Gtk.ListStore asset_liststore = new Gtk.ListStore (1, typeof (string));
-            foreach (Asset asset in assets){
-                Gtk.TreeIter iter;
-                asset_liststore.append (out iter);
-                asset_liststore.set (iter, Column.ASSET_NAME, asset.short_name);
+        private void on_add_asset_clicked () {
+            var dialog = new AssetDialog (this);
+            var tmp_asset = dialog.get_new_asset ();
+             
+            if (tmp_asset != null) {
+                assets.add (tmp_asset);                
+                update_main_view (_("New asset added."));
+                            
+            } else {
+                update_main_view (_("New asset discarded."));
             }
 
-            message_dialog.transient_for = this;
-
-            var suggested_button = new Gtk.Button.with_label (_("Add"));
-            suggested_button.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
-            message_dialog.add_action_widget (suggested_button, Gtk.ResponseType.ACCEPT);
-
-            var ask_for_info_widget = new Gtk.Grid ();
-
-            // Define objects
-            var title_time_label = new Gtk.Label (_("Temporal details"));
-            title_time_label.halign = Gtk.Align.START;
-            title_time_label.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
-
-            var date_label = new Gtk.Label (_("Date: "));
-            date_label.halign = Gtk.Align.END;
-            var date_picker = new Granite.Widgets.DatePicker ();
-
-            var time_label = new Gtk.Label (_("Time: "));
-            time_label.halign = Gtk.Align.END;
-            var time_picker = new Granite.Widgets.TimePicker ();
-
-            var title_source_label = new Gtk.Label (_("Source"));
-            title_source_label.halign = Gtk.Align.START;
-            title_source_label.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
-
-            var source_asset_label = new Gtk.Label (_("Asset: "));
-            source_asset_label.halign = Gtk.Align.END;
-            var source_asset_combobox = new Gtk.ComboBox.with_model (asset_liststore);
-            source_asset_combobox.set_active (0);
-
-            var source_qty_label = new Gtk.Label (_("Quantity: "));
-            source_qty_label.halign = Gtk.Align.END;
-            var source_qty_spin = new Gtk.SpinButton.with_range (0, 100000000, 0.00000001);
-
-            var title_destiny_label = new Gtk.Label (_("Destiny"));
-            title_destiny_label.halign = Gtk.Align.START;
-            title_destiny_label.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
-
-            var destiny_asset_label = new Gtk.Label (_("Asset: "));
-            destiny_asset_label.halign = Gtk.Align.END;
-            var destiny_asset_combobox = new Gtk.ComboBox.with_model (asset_liststore);
-            destiny_asset_combobox.set_active (0);
-
-            var destiny_qty_label = new Gtk.Label (_("Quantity: "));
-            destiny_qty_label.halign = Gtk.Align.END;
-            var destiny_qty_spin = new Gtk.SpinButton.with_range (0, 100000000, 0.00000001);
-
-            var real_asset_label = new Gtk.Label (_("Asset real value: "));
-            real_asset_label.halign = Gtk.Align.END;
-            var real_asset_spin = new Gtk.SpinButton.with_range (0, 100000000, 0.01);
-            real_asset_spin.set_sensitive (false);
-
-            // Manage events linked to the combobox
-            source_asset_combobox.changed.connect ( () => {
-                var src_active_asset = assets.get (source_asset_combobox.get_active ());
-                var dst_active_asset = assets.get (destiny_asset_combobox.get_active ());
-
-                if (src_active_asset.short_name != "EUR") {
-                    if (dst_active_asset.short_name != "EUR") {
-                        real_asset_spin.set_sensitive (true);
-                    } else {
-                        real_asset_spin.set_value (destiny_qty_spin.get_value ());
-                        real_asset_spin.set_sensitive (false);
-                    }
-                } else if (dst_active_asset.short_name != "EUR") {
-                    real_asset_spin.set_value (source_qty_spin.get_value ());
-                    real_asset_spin.set_sensitive (false);
-                } else {
-                    real_asset_spin.set_sensitive (true);
-                }
-            });
-            destiny_asset_combobox.changed.connect ( () => {
-                var src_active_asset = assets.get (source_asset_combobox.get_active ());
-                var dst_active_asset = assets.get (destiny_asset_combobox.get_active ());
-
-                if (src_active_asset.short_name != "EUR") {
-                    if (dst_active_asset.short_name != "EUR") {
-                        real_asset_spin.set_sensitive (true);
-                    } else {
-                        real_asset_spin.set_value (destiny_qty_spin.get_value ());
-                        real_asset_spin.set_sensitive (false);
-                    }
-                } else if (dst_active_asset.short_name != "EUR") {
-                    real_asset_spin.set_value (source_qty_spin.get_value ());
-                    real_asset_spin.set_sensitive (false);
-                } else {
-                    real_asset_spin.set_sensitive (true);
-                }
-            });
-
-            // Pack grid elements together together
-            ask_for_info_widget.column_spacing = ask_for_info_widget.row_spacing = 12;
-            ask_for_info_widget.halign = ask_for_info_widget.valign = Gtk.Align.CENTER;
-
-            ask_for_info_widget.attach (title_time_label, 0, 0, 2);
-            ask_for_info_widget.attach (date_label, 0, 1);
-            ask_for_info_widget.attach (date_picker, 1, 1);
-            ask_for_info_widget.attach (time_label, 0, 2);
-            ask_for_info_widget.attach (time_picker, 1, 2);
-
-            ask_for_info_widget.attach (title_source_label, 0, 3, 2);
-            ask_for_info_widget.attach (source_asset_label, 0, 4);
-            ask_for_info_widget.attach (source_asset_combobox, 1, 4);
-            ask_for_info_widget.attach (source_qty_label, 0, 5);
-            ask_for_info_widget.attach (source_qty_spin, 1, 5);
-
-            ask_for_info_widget.attach (title_destiny_label, 0, 6, 2);
-            ask_for_info_widget.attach (destiny_asset_label, 0, 7);
-            ask_for_info_widget.attach (destiny_asset_combobox, 1, 7);
-            ask_for_info_widget.attach (destiny_qty_label, 0, 8);
-            ask_for_info_widget.attach (destiny_qty_spin, 1, 8);
-            ask_for_info_widget.attach (real_asset_label, 0, 9);
-            ask_for_info_widget.attach (real_asset_spin, 1, 9);
-
-            //message_dialog.show_error_details ("The details of a possible error.");
-            message_dialog.custom_bin.add (ask_for_info_widget);
-            message_dialog.show_all ();
-
-            if (message_dialog.run () == Gtk.ResponseType.ACCEPT) {
-                toast.title = _("New operation added.");
-                toast.send_notification ();
-            }
-
-            message_dialog.destroy ();
+            dialog.destroy ();
         }
 
-        private void on_add_asset_clicked () {
-            var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
-                _("Add new asset"),
-                _("Introduce the details of a new asset you want to register."),
-                "application-vnd.openxmlformats-officedocument.presentationml.presentation",
-                Gtk.ButtonsType.CANCEL
-            );
-
-            message_dialog.transient_for = this;
-
-            var suggested_button = new Gtk.Button.with_label (_("Add"));
-            suggested_button.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
-            suggested_button.set_sensitive (false);
-            message_dialog.add_action_widget (suggested_button, Gtk.ResponseType.ACCEPT);
-
-            var ask_for_asset_widget = new Gtk.Grid ();
-
-            // Define objects
-            var title_time_label = new Gtk.Label (_("Asset details"));
-            title_time_label.halign = Gtk.Align.START;
-            title_time_label.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
-
-            var name_label = new Gtk.Label (_("Name: "));
-            name_label.halign = Gtk.Align.END;
-            var name_text = new Gtk.Entry ();
-            name_text.set_placeholder_text (_("An asset"));
-
-            var short_name_label = new Gtk.Label (_("Short name: "));
-            short_name_label.halign = Gtk.Align.END;
-            var short_name_text = new Gtk.Entry ();
-            short_name_text.set_max_length (3);
-            short_name_text.set_placeholder_text (_("XYZ"));
-
-            // Change events added
-            name_text.changed.connect ( () => {
-                if (name_text.get_text () != null && short_name_text.get_text () != null) {
-                    suggested_button.set_sensitive (true);
-                }
-            });
-            short_name_text.changed.connect ( () => {
-                if (name_text.get_text () != null && short_name_text.get_text () != null) {
-                    suggested_button.set_sensitive (true);
-                }
-            });
-
-            // Populate the list: 1 is the number of columns, the second value the type.
-            var cat_liststore = new Gtk.ListStore (1, typeof (string));
-            Gtk.TreeIter iter;
-            cat_liststore.append (out iter);
-            cat_liststore.set (iter, 0, _("Currency"));
-            cat_liststore.append (out iter);
-            cat_liststore.set (iter, 0, _("Cryptoasset"));
-
-            var category_label = new Gtk.Label (_("Category: "));
-            category_label.halign = Gtk.Align.END;
-            var category_combobox = new Gtk.ComboBox.with_model (cat_liststore);
-
-            // Add the cell representation for  the combobox
-            var cell = new Gtk.CellRendererText ();
-            category_combobox.pack_start (cell, false);
-            category_combobox.set_attributes (cell, "text", 0);
-            category_combobox.set_active (0);
-
-            // Pack grid elements together together
-            ask_for_asset_widget.column_spacing = ask_for_asset_widget.row_spacing = 12;
-            ask_for_asset_widget.halign = ask_for_asset_widget.valign = Gtk.Align.CENTER;
-
-            ask_for_asset_widget.attach (title_time_label, 0, 0, 2);
-            ask_for_asset_widget.attach (name_label, 0, 1);
-            ask_for_asset_widget.attach (name_text, 1, 1);
-            ask_for_asset_widget.attach (short_name_label, 0, 2);
-            ask_for_asset_widget.attach (short_name_text, 1, 2);
-            ask_for_asset_widget.attach (category_label, 0, 3);
-            ask_for_asset_widget.attach (category_combobox, 1, 3);
-
-            //message_dialog.show_error_details ("The details of a possible error.");
-            message_dialog.custom_bin.add (ask_for_asset_widget);
-            message_dialog.show_all ();
-
-            if (message_dialog.run () == Gtk.ResponseType.ACCEPT) {
-                // Grab values
-                var new_asset = new Asset (
-                    name_text.get_text (),
-                    short_name_text.get_text (),
-                    _("Currency"),
-                    0.0,
-                    0.0
-                );
-                assets.add (new_asset);
-
-                toast.title = _("New asset added.");
-                toast.send_notification ();
+        private void on_add_operation_clicked () {
+            var dialog = new OperationDialog (this);
+            var tmp_operation = dialog.get_new_operation (assets);
+             
+            if (tmp_operation != null) {
+                operations.add (tmp_operation);                
+                print (_("Operation added\n"));
+                update_main_view (_("New operation added."));
+                            
+            } else {
+                print (_("Operation discarded\n"));
+                update_main_view (_("New operation discarded."));
             }
 
-            update_main_view ();
-
-            message_dialog.destroy ();
+            dialog.destroy ();
         }
 
         private void on_menu_clicked (Gtk.Button sender) {
@@ -518,19 +323,80 @@ namespace Valoro {
             this.header_bar.menu.show_all ();
         }
 
-        private void update_main_view () {
-            // Remove elements
-            this.foreach ((element) => {this.remove (element);});
+        private void on_help_clicked () {
+            try {
+                AppInfo.launch_default_for_uri (_("https://github.com/febrezo/valoro/master/doc/support/en/"), null);
+            } catch (Error e) {
+                warning (e.message);
+            }
+        }
+
+        private void show_toast (string message) {
+            toast.title = message;
+            toast.send_notification ();
+        }
+
+        private void create_main_view () {
+            // Remove elements if present
+            this.remove (welcome_view);
+
+            // Calculate accountancy
+            var entries = calculate_accounting_entries ();
 
             // Call _deploy_main_layout with some data
-            var main_view = new MainView (assets, operations);
-
+            main_view = new MainView (assets, operations, entries);
+            
             // Create overlay
             var overlay_panel = new Gtk.Overlay ();
             overlay_panel.add_overlay (main_view);
             overlay_panel.add_overlay (toast);
-
             this.add (overlay_panel);
+            
+            this.show_all ();
+        }
+
+        private void update_main_view (string message) {
+            print (message);
+            show_toast (message);
+            
+            // Calculate accountancy
+            var entries = calculate_accounting_entries ();
+            print (entries.size.to_string ());
+            
+            // Call _deploy_main_layout with some data
+            main_view.update_data (assets, operations, entries);
+        }
+        
+        
+        private ArrayList<AccountingEntry> calculate_accounting_entries () {
+            var results = new ArrayList<AccountingEntry> ();
+            
+            // TODO: Build the hashmap
+            //var asset_movements = new HashMap<string,Asset> ();
+            
+            foreach (Operation op in operations) {
+                // TODO: Get the source asset and check if it is a cryptoasset
+                 
+                // TODO: If it is, it is a selling operation
+                // TODO: Get the number of units sold
+                // TODO: Iterate the Asset buying movements until the number of units reached is sold
+                // TODO: Calculate the final price
+                // TODO: Update the buying movements list removing spent assets
+                // TODO: Build the Accounting Entry
+                /*var tmp_entry = new AccountingEntry (
+                    op.datetime,
+                    op.source_asset,
+                    op.source_qty,
+                    TODO: calculate taking into account the previous buyings,
+                    op.normalized_qty,
+                    TODO: calculate,
+                );*/
+                
+                // TODO: Add to the list 
+                //results.add (tmp_entry);
+            }
+            
+            return results;
         }
     }
 }

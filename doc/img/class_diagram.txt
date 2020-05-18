@@ -23,9 +23,26 @@ package AppUtils {
         +Operation.from_datetime_string ()
     }
 
+    class AccountingEntry {
+        +DateTime datetime
+        +string asset_id
+        +double asset_units
+        +double buying_price
+        +double selling_price
+        +double benefit
+        +AccountingEntry ()
+        +AccountingEntry.from_splitted_datetime_string ()
+        +AccountingEntry.from_datetime_string ()
+    }
+
+    class AccountingEntryCorrupted {
+        +CODE_01
+    }
+
     class OperationCorrupted {
         +CODE_01
     }
+
 }
 
 package AppWidgets {
@@ -33,13 +50,23 @@ package AppWidgets {
         +SettingsMenu ()
     }
 
-    enum Column {
-		DATETIME
-	    SOURCE_ASSET
-	    SOURCE_QTY
-	    DESTINY_ASSET
-	    DESTINY_QTY
-	    NORMALIZED_QTY
+    class AccountingTable << (U,orchid) >> extends Gtk.Grid {
+        +Gtk.TreeView view
+        +AccountingTable ()
+        +setup_treeview ()
+        #on_changed ()
+    }
+
+    class OperationDialog << (U,orchid) >> extends Granite.MessageDialog {
+        -Granite.Widgets.DatePicker date_picker
+        -Granite.Widgets.TimePicker time_picker
+        -Gtk.ComboBox src_asset_combobox
+        -Gtk.SpinButton src_qty_spin
+        -Gtk.ComboBox SpinButton dst_asset_combobox
+        -Gtk.SpinButton dst_qty_spin
+        -Gtk.SpinButton real_asset_spin
+        +OperationDialog ()
+        +get_new_operation ()
     }
 
     class OperationsTable << (U,orchid) >> extends Gtk.Grid {
@@ -50,7 +77,14 @@ package AppWidgets {
         +OperationsTable ()
         +setup_treeview ()
         #on_changed ()
-        build_source_list_item
+    }
+
+    class AssetDialog << (U,orchid) >> extends Granite.MessageDialog {
+        -Gtk.Entry name_entry
+        -Gtk.Entry short_name_entry
+        -Gtk.ComboBox category_combobox
+        +AssetDialog ()
+        +get_new_asset ()
     }
 
     class AssetPanel << (U,orchid) >> extends Granite.Widgets.SourceList {
@@ -69,16 +103,17 @@ package AppWidgets {
 }
 
 package AppViews {
-    class WelcomeView << (U,orchid) >> extends Gtk.Grid {
+    class WelcomeView << (U,orchid) >> extends Granite.Widgets.Welcome {
         +WelcomeView ()
     }
 
     class MainView << (U,orchid) >> extends Gtk.Frame {
         -AssetPanel asset_panel
         -OperationsTable operations_table
+        -AccountingTable accounting_table
+        -buid_ui ()
         +MainView ()
-        +update_asset_list ()
-        +update_operations_table ()
+        +update_data ()
     }
 }
 
@@ -91,14 +126,18 @@ package Valoro {
         -WelcomeView welcome_view
         -Granite.Widgets.Toast toast
         -HeaderBar header_bar
-        -SettingsMenu menu
         +Window ()
+        -calculate_accounting_entries ()
+        -create_main_view ()
         -on_new_clicked ()
         -on_open_clicked ()
         -on_save_clicked ()
         -on_add_asset_clicked ()
         -on_add_operation_clicked ()
         -on_help_clicked ()
+        -on_welcome_clicked ()
+        -show_toast ()
+        -update_main_view ()
     }
 
     class ValoroApp extends Gtk.Application {
@@ -109,15 +148,19 @@ package Valoro {
 }
 
 Operation - OperationCorrupted : throws >
-Window "1" *-- "many" Operation : contains >
-OperationsTable - Column : uses >
+AccountingEntry - AccountingEntryCorrupted : throws >
 MainView *-- AssetPanel : uses >
 MainView *-- OperationsTable : uses >
+MainView *-- AccountingTable : uses >
+HeaderBar *-- SettingsMenu : uses >
+Window "1" *-- "many" Operation : contains >
 Window "1" *-- "many" Asset : contains >
-HeaderBar *-- SettingsMenu : < composes
-Window *-- HeaderBar : < composes
-Window *-- MainView : uses >
-Window *-- WelcomeView : uses >
+Window -- AccountingEntry : uses >
+Window *- HeaderBar : uses >
+Window *- AssetDialog : uses >
+Window *- OperationDialog : uses >
+Window *- MainView : uses >
+Window *- WelcomeView : uses >
 ValoroApp - Window : uses >
 
 @enduml

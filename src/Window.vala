@@ -31,12 +31,14 @@ namespace Valoro {
         private string file_path;
         ArrayList<Operation> operations;
         ArrayList<Asset> assets;
+        ArrayList<AccountingEntry> entries;
 
         // Window elements
         private HeaderBar header_bar;
         private Granite.Widgets.Toast toast;
 
         // Views
+        private Gtk.Overlay overlay_panel;
         private MainView main_view;
         private WelcomeView welcome_view;
 
@@ -54,6 +56,9 @@ namespace Valoro {
             this.default_width = 800;
             this.header_bar = new HeaderBar ();
             this.toast = new Granite.Widgets.Toast (_("Valoro"));
+            this.assets = new ArrayList<Asset> ();
+            this.operations = new ArrayList<Operation> ();
+            this.entries = new ArrayList<AccountingEntry> ();
 
             // Define views
             // ------------
@@ -65,11 +70,22 @@ namespace Valoro {
             this.header_bar.add_operation_btn.clicked.connect (on_add_operation_clicked);
             this.header_bar.new_btn.clicked.connect (on_new_clicked);
             this.header_bar.open_btn.clicked.connect (on_open_clicked);
+            this.header_bar.save_btn.clicked.connect (on_save_clicked);
             this.header_bar.settings_menu_btn.clicked.connect (on_menu_clicked);
+            
             this.welcome_view.activated.connect ((index) => {
-                this.on_welcome_clicked (index);
+                switch (index) {
+                    case 0:
+                        this.on_new_clicked ();
+                        break;
+                    case 1:
+                        this.on_open_clicked ();
+                        break;
+                    case 2:
+                        this.on_help_clicked ();
+                        break;
+                }
             });
-
 
             // Pack things
             // -----------
@@ -94,18 +110,42 @@ namespace Valoro {
         }        
         
         private void on_new_clicked () {
-            this.header_bar.subtitle = _("Unsaved logbook");
-
-            // Create a new empty currency
+            // Remove main view and welcome view if present
+            remove (overlay_panel);
+            remove (welcome_view);
+            
+            // Call _deploy_main_layout with some data
+            assets = new ArrayList<Asset> ();
             var euro = new Asset ("Euro", "EUR", _("Currency"), 0.0, 0.0);
             assets.add (euro);
+            operations = new ArrayList<Operation> ();
+            entries = new ArrayList<AccountingEntry> ();
+            
+            main_view = new MainView (assets, operations, entries);
+            main_view.new_book_view.activated.connect ((index) => {
+                switch (index) {
+                    case 0:
+                        this.on_add_asset_clicked ();
+                        break;
+                    case 1:
+                        this.on_add_operation_clicked ();
+                        break;
+                }
+            });
+            
+            // Create overlay
+            overlay_panel = new Gtk.Overlay ();
+            overlay_panel.add_overlay (main_view);
+            overlay_panel.add_overlay (toast);
+            add (overlay_panel);
 
             // Activate save, export and new operation buttons
-            this.header_bar.save_btn.set_sensitive (true);
-            this.header_bar.add_operation_btn.set_sensitive (true);
-            this.header_bar.add_asset_btn.set_sensitive (true);
+            header_bar.subtitle = _("Unsaved logbook");
+            header_bar.save_btn.set_sensitive (true);
+            header_bar.add_operation_btn.set_sensitive (true);
+            header_bar.add_asset_btn.set_sensitive (true);
 
-            print ("hola");
+            show_all ();
         }
 
         private void on_open_clicked () {
@@ -194,9 +234,26 @@ namespace Valoro {
                     );
                     show_toast (message);
                                         
-                    create_main_view ();
+                    // Remove main view and welcome view if present
+                    remove (overlay_panel);
+                    remove (welcome_view);
 
-                    // Activate buttons
+                    // Calculate accountancy
+                    var entries = update_accounting_entries ();
+
+                    // Call _deploy_main_layout with some data
+                    main_view = new MainView (assets, operations, entries);
+                    
+                    // Create overlay
+                    overlay_panel = new Gtk.Overlay ();
+                    overlay_panel.add_overlay (main_view);
+                    overlay_panel.add_overlay (toast);
+                    this.add (overlay_panel);
+                    
+                    this.show_all ();
+
+                    // Activate and deactivate buttons
+                    this.header_bar.save_btn.set_sensitive (false);
                     this.header_bar.add_asset_btn.set_sensitive (true);
                     this.header_bar.add_operation_btn.set_sensitive (true);
                 } catch (Error e) {
@@ -249,14 +306,12 @@ namespace Valoro {
 
             var gen = new Json.Generator ();
             gen.set_root (root);
-
-            print (gen.to_data (null));
-
+            
             if (this.file_path != null) {
                 FileUtils.set_contents (this.file_path, gen.to_data (null));
                 this.header_bar.subtitle = this.file_path;
 
-                toast.title = _("File saved: '%s'");
+                toast.title = _("File saved: '%s'".printf (this.file_path));
                 toast.send_notification ();
             } else {
                 var dialog = new Gtk.FileChooserDialog (
@@ -291,28 +346,26 @@ namespace Valoro {
             var tmp_asset = dialog.get_new_asset ();
              
             if (tmp_asset != null) {
-                assets.add (tmp_asset);                
+                assets.add (tmp_asset);
                 update_main_view (_("New asset added."));
-                            
+                header_bar.save_btn.set_sensitive (true);
             } else {
-                update_main_view (_("New asset discarded."));
+                update_main_view (_("Asset discarded."));
             }
 
             dialog.destroy ();
         }
 
         private void on_add_operation_clicked () {
-            var dialog = new OperationDialog (this);
-            var tmp_operation = dialog.get_new_operation (assets);
-             
+            var dialog = new OperationDialog (this, assets);
+            var tmp_operation = dialog.get_new_operation ();
+
             if (tmp_operation != null) {
                 operations.add (tmp_operation);                
-                print (_("Operation added\n"));
                 update_main_view (_("New operation added."));
-                            
+                header_bar.save_btn.set_sensitive (true);            
             } else {
-                print (_("Operation discarded\n"));
-                update_main_view (_("New operation discarded."));
+                update_main_view (_("Operation discarded."));
             }
 
             dialog.destroy ();
@@ -336,39 +389,17 @@ namespace Valoro {
             toast.send_notification ();
         }
 
-        private void create_main_view () {
-            // Remove elements if present
-            this.remove (welcome_view);
-
-            // Calculate accountancy
-            var entries = calculate_accounting_entries ();
-
-            // Call _deploy_main_layout with some data
-            main_view = new MainView (assets, operations, entries);
-            
-            // Create overlay
-            var overlay_panel = new Gtk.Overlay ();
-            overlay_panel.add_overlay (main_view);
-            overlay_panel.add_overlay (toast);
-            this.add (overlay_panel);
-            
-            this.show_all ();
-        }
-
         private void update_main_view (string message) {
-            print (message);
             show_toast (message);
             
             // Calculate accountancy
-            var entries = calculate_accounting_entries ();
-            print (entries.size.to_string ());
+            entries = update_accounting_entries ();
             
             // Call _deploy_main_layout with some data
-            main_view.update_data (assets, operations, entries);
+            main_view.update_view (assets, operations, entries);
         }
-        
-        
-        private ArrayList<AccountingEntry> calculate_accounting_entries () {
+
+        private ArrayList<AccountingEntry> update_accounting_entries () {
             var results = new ArrayList<AccountingEntry> ();
             
             // TODO: Build the hashmap

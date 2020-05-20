@@ -26,43 +26,47 @@ using AppWidgets;
 
 namespace AppViews {
     public class MainView : Gtk.Frame {
-        private AssetPanel asset_panel;
+        private Gtk.Paned paned;
+        public AssetPanel asset_panel;
+        public NewLogbookView new_book_view;
         private OperationsTable operations_table;
         private AccountingTable accounting_table;
         
         public MainView (ArrayList<Asset> assets, ArrayList<Operation> operations, ArrayList<AccountingEntry> entries) {
-            // Creating the main widgets
-            // -------------------------
-            
             // Create the left pane
             asset_panel = new AssetPanel (assets);
             
+            if (operations.size > 0) {
+                // Update information
+                fill_view (assets, operations, entries);
+            } else {
+                // New book 
+                new_book_view = new NewLogbookView ();
+                build_ui (new_book_view);
+            }
+        }
+        
+        public void update_view (ArrayList<Asset> assets, ArrayList<Operation> operations, ArrayList<AccountingEntry> entries) {
+            // Create the left pane
+            asset_panel = new AssetPanel (assets);
+            
+            if (operations.size > 0) {
+                // Update information
+                fill_view (assets, operations, entries);
+            } else {
+                // New book 
+                new_book_view = new NewLogbookView ();
+                build_ui (new_book_view);
+            }
+        }
+        
+        private void fill_view (ArrayList<Asset> assets, ArrayList<Operation> operations, ArrayList<AccountingEntry> entries) {
             // Create the operation table
             operations_table = new OperationsTable (operations);
             
             // Create accounting table
             accounting_table = new AccountingTable (entries);
             
-            build_ui ();
-        }
-        
-        public void update_data (ArrayList<Asset> assets, ArrayList<Operation> operations, ArrayList<AccountingEntry> entries) {
-            // Cleaning previous elements
-            this.foreach ((element) => {this.remove (element);});
-            
-            // Create the left pane
-            asset_panel = new AssetPanel (assets);
-            
-            // Create the operation table
-            operations_table = new OperationsTable (operations);
-            
-            // Create accounting table
-            accounting_table = new AccountingTable (entries);
-            
-            build_ui ();
-        }
-        
-        private void build_ui () {
             // Packaging things
             var operations_page = new Gtk.Grid ();
             operations_page.add (operations_table);
@@ -97,18 +101,26 @@ namespace AppViews {
             stack_switcher.halign = Gtk.Align.CENTER;
             
             var stack_grid = new Gtk.Grid ();
+            stack_grid.margin_top = 12;
+            stack_grid.margin_bottom = 12;
             stack_grid.column_spacing = 12;
             stack_grid.row_spacing = 12;
             stack_grid.halign = Gtk.Align.CENTER;
             stack_grid.attach (stack_switcher, 0, 0);
             stack_grid.attach (stack, 0, 1);
             
-            // Building the pane
-            // -----------------
-            var paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
+            build_ui (stack_grid);
+        }
+        
+        private void build_ui (Gtk.Container content) {
+            // Cleaning previous elements in the container
+            this.foreach ((element) => {this.remove (element);});
+            
+            // Building the new pane
+            paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
             paned.position = 200;
             paned.pack1 (asset_panel, true, false);
-            paned.add2 (stack_grid);
+            paned.add2 (content);
             
             add (paned);
             margin = 36;

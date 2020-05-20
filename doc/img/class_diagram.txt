@@ -65,8 +65,10 @@ package AppWidgets {
         -Gtk.ComboBox SpinButton dst_asset_combobox
         -Gtk.SpinButton dst_qty_spin
         -Gtk.SpinButton real_asset_spin
+        +ArrayList<Asset> assets
         +OperationDialog ()
         +get_new_operation ()
+        -on_comboboxes_changed ()
     }
 
     class OperationsTable << (U,orchid) >> extends Gtk.Grid {
@@ -80,6 +82,7 @@ package AppWidgets {
     }
 
     class AssetDialog << (U,orchid) >> extends Granite.MessageDialog {
+        -string[] categories
         -Gtk.Entry name_entry
         -Gtk.Entry short_name_entry
         -Gtk.ComboBox category_combobox
@@ -103,17 +106,23 @@ package AppWidgets {
 }
 
 package AppViews {
-    class WelcomeView << (U,orchid) >> extends Granite.Widgets.Welcome {
-        +WelcomeView ()
-    }
-
     class MainView << (U,orchid) >> extends Gtk.Frame {
-        -AssetPanel asset_panel
+        +AssetPanel asset_panel
+        +NewLogbookView new_book_view
         -OperationsTable operations_table
         -AccountingTable accounting_table
         -buid_ui ()
+        -fill_view ()
         +MainView ()
-        +update_data ()
+        +update_view ()
+    }
+    
+    class NewLogbookView << (U,orchid) >> extends Granite.Widgets.Welcome {
+        +NewLogbookView ()
+    }
+    
+    class WelcomeView << (U,orchid) >> extends Granite.Widgets.Welcome {
+        +WelcomeView ()
     }
 }
 
@@ -122,12 +131,12 @@ package Valoro {
         -string file_path
         #Gee.ArrayList<Asset> assets
         #Gee.ArrayList<Operation> operations
+        #Gee.ArrayList<AccountingEntry> entries
         -MainView main_view
         -WelcomeView welcome_view
         -Granite.Widgets.Toast toast
         -HeaderBar header_bar
         +Window ()
-        -calculate_accounting_entries ()
         -create_main_view ()
         -on_new_clicked ()
         -on_open_clicked ()
@@ -138,6 +147,7 @@ package Valoro {
         -on_welcome_clicked ()
         -show_toast ()
         -update_main_view ()
+        -update_accounting_entries ()
     }
 
     class ValoroApp extends Gtk.Application {
@@ -161,6 +171,7 @@ Window *- AssetDialog : uses >
 Window *- OperationDialog : uses >
 Window *- MainView : uses >
 Window *- WelcomeView : uses >
+Window *- NewLogbookView : uses >
 ValoroApp - Window : uses >
 
 @enduml

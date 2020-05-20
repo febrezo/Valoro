@@ -19,6 +19,7 @@
 * Authored by: Félix Breo <felixbrezo@disroot.orgm>
 */
 
+using Gee;
 using AppUtils;
 
 namespace AppWidgets {
@@ -34,18 +35,32 @@ namespace AppWidgets {
         private Gtk.ComboBox dst_asset_combobox;
         private Gtk.SpinButton dst_qty_spin;
         private Gtk.SpinButton real_asset_spin;
+        public ArrayList<Asset> assets {get; construct set;}
         
-        public OperationDialog (Gtk.Window parent) {
+        public OperationDialog (Gtk.Window parent, ArrayList<Asset> assets) {
             Object (
                 primary_text: _("Add new operation"),
                 secondary_text: _("Introduce the details of the operation you want to register."),
                 buttons: Gtk.ButtonsType.CANCEL,
-                transient_for: parent
-            );    
+                transient_for: parent,
+                assets: assets
+            );
         } 
-        
+
         construct {
             this.image_icon = GLib.Icon.new_for_string ("event-new");
+
+            // Cell representation for the combobox
+            var cell = new Gtk.CellRendererText ();
+
+            // Populate the list of assets
+            var asset_liststore = new Gtk.ListStore (1, typeof (string));
+
+            foreach (Asset asset in assets){
+                Gtk.TreeIter iter;
+                asset_liststore.append (out iter);
+                asset_liststore.set (iter, Column.ASSET_NAME, asset.short_name);
+            }
 
             var suggested_button = new Gtk.Button.with_label (_("Add"));
             suggested_button.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
@@ -72,6 +87,11 @@ namespace AppWidgets {
 
             var source_asset_label = new Gtk.Label (_("Asset: "));
             source_asset_label.halign = Gtk.Align.END;
+            src_asset_combobox = new Gtk.ComboBox.with_model (asset_liststore);
+            src_asset_combobox.set_active (0);
+            // Add the cell representation for  the combobox
+            src_asset_combobox.pack_start (cell, false);
+            src_asset_combobox.set_attributes (cell, "text", 0);
             
             var source_qty_label = new Gtk.Label (_("Quantity: "));
             source_qty_label.halign = Gtk.Align.END;
@@ -83,7 +103,11 @@ namespace AppWidgets {
 
             var destiny_asset_label = new Gtk.Label (_("Asset: "));
             destiny_asset_label.halign = Gtk.Align.END;
-
+            dst_asset_combobox = new Gtk.ComboBox.with_model (asset_liststore);
+            dst_asset_combobox.set_active (0);
+            // Add the cell representation for  the combobox
+            dst_asset_combobox.pack_start (cell, false);
+            dst_asset_combobox.set_attributes (cell, "text", 0);
 
             var destiny_qty_label = new Gtk.Label (_("Quantity: "));
             destiny_qty_label.halign = Gtk.Align.END;
@@ -118,75 +142,32 @@ namespace AppWidgets {
             ask_for_info_widget.attach (real_asset_label, 0, 9);
             ask_for_info_widget.attach (real_asset_spin, 1, 9);
 
-            this.custom_bin.add (ask_for_info_widget);
+            // Manage events linked to the combobox
+            src_asset_combobox.changed.connect (on_comboboxes_change);
+            dst_asset_combobox.changed.connect (on_comboboxes_change);
+
+            custom_bin.add (ask_for_info_widget);
             this.show_all ();
         }
-
-        private void prepare_comboboxes (Gee.ArrayList<Asset> assets) {
-            // Populate the list of assets
-            Gtk.ListStore asset_liststore = new Gtk.ListStore (1, typeof (string));
-            foreach (Asset asset in assets){
-                Gtk.TreeIter iter;
-                asset_liststore.append (out iter);
-                asset_liststore.set (iter, Column.ASSET_NAME, asset.short_name);
-            }
-            
-            src_asset_combobox = new Gtk.ComboBox.with_model (asset_liststore);
-            src_asset_combobox.set_active (0);
-            dst_asset_combobox = new Gtk.ComboBox.with_model (asset_liststore);
-            dst_asset_combobox.set_active (0);
-                        
-            // Manage events linked to the combobox
-            src_asset_combobox.changed.connect ( () => {
-                var src_active_asset = assets.get (src_asset_combobox.get_active ());
-                var dst_active_asset = assets.get (dst_asset_combobox.get_active ());
-
-                if (src_active_asset.short_name != "EUR") {
-                    if (dst_active_asset.short_name != "EUR") {
-                        real_asset_spin.set_sensitive (true);
-                    } else {
-                        real_asset_spin.set_value (dst_qty_spin.get_value ());
-                        real_asset_spin.set_sensitive (false);
-                    }
-                } else if (dst_active_asset.short_name != "EUR") {
-                    real_asset_spin.set_value (src_qty_spin.get_value ());
-                    real_asset_spin.set_sensitive (false);
-                } else {
-                    real_asset_spin.set_sensitive (true);
-                }
-            });
-            
-            dst_asset_combobox.changed.connect ( () => {
-                var src_active_asset = assets.get (src_asset_combobox.get_active ());
-                var dst_active_asset = assets.get (dst_asset_combobox.get_active ());
-
-                if (src_active_asset.short_name != "EUR") {
-                    if (dst_active_asset.short_name != "EUR") {
-                        real_asset_spin.set_sensitive (true);
-                    } else {
-                        real_asset_spin.set_value (dst_qty_spin.get_value ());
-                        real_asset_spin.set_sensitive (false);
-                    }
-                } else if (dst_active_asset.short_name != "EUR") {
-                    real_asset_spin.set_value (src_qty_spin.get_value ());
-                    real_asset_spin.set_sensitive (false);
-                } else {
-                    real_asset_spin.set_sensitive (true);
-                }
-            });
-        }
         
-        public Operation? get_new_operation (Gee.ArrayList<Asset> assets) {
-            prepare_comboboxes (assets);
-            
+        public Operation? get_new_operation () {
             if (this.run () == Gtk.ResponseType.ACCEPT) {
+                // Auxiliar information
                 var src_active_asset = assets.get (src_asset_combobox.get_active ());
                 var dst_active_asset = assets.get (dst_asset_combobox.get_active ());
-                
+                var provided_date = new GLib.DateTime (
+                    new TimeZone.local (),
+                    date_picker.date.get_year (),
+                    date_picker.date.get_month (),
+                    date_picker.date.get_day_of_month (),
+                    time_picker.time.get_hour (),
+                    time_picker.time.get_minute (),
+                    time_picker.time.get_seconds ()
+                ); 
+
                 // Grab values
-                return new Operation.from_splitted_datetime_string (
-		            date_picker.format,
-		            time_picker.format_24,
+                return new Operation (
+		            provided_date,
                     src_active_asset.short_name,
                     src_qty_spin.get_value (),
                     dst_active_asset.short_name,
@@ -196,6 +177,25 @@ namespace AppWidgets {
             }
 
             return null;
-        } 
+        }
+        
+        private void on_comboboxes_change () {
+            var src_active_asset = assets.get (src_asset_combobox.get_active ());
+            var dst_active_asset = assets.get (dst_asset_combobox.get_active ());
+            
+            if (src_active_asset.short_name != "EUR") {
+                if (dst_active_asset.short_name != "EUR") {
+                    real_asset_spin.set_sensitive (true);
+                } else {
+                    real_asset_spin.set_value (dst_qty_spin.get_value ());
+                    real_asset_spin.set_sensitive (false);
+                }
+            } else if (dst_active_asset.short_name != "EUR") {
+                real_asset_spin.set_value (src_qty_spin.get_value ());
+                real_asset_spin.set_sensitive (false);
+            } else {
+                real_asset_spin.set_sensitive (true);
+            }
+        }
     }
 }

@@ -17,6 +17,7 @@ executable(
   'src/Utils/Operation.vala',
   'src/Views/WelcomeView.vala',
   'src/Views/MainView.vala',
+  'src/Views/NewLogbookView.vala',
   'src/Widgets/AssetDialog.vala',
   'src/Widgets/AssetPanel.vala',
   'src/Widgets/HeaderBar.vala',

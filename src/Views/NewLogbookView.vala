@@ -19,18 +19,17 @@
 * Authored by: Félix Breo <felixbrezo@disroot.orgm>
 */
 
-namespace Valoro {
-    public class WelcomeView : Granite.Widgets.Welcome {
-        public WelcomeView () {
+namespace AppViews {
+    public class NewLogbookView : Granite.Widgets.Welcome {
+        public NewLogbookView () {
             Object ();
         } 
         
         construct {
-            this.title = _("Valoro");
-            this.subtitle = _("Manage and track your cryptoassets");
-            this.append ("document-new", _("Create new logbook"), _("Start a new logbook to track your operations"));
-            this.append ("document-open", _("Open logbook"), _("Work with previously saved logbook files"));
-            this.append ("info", _("Looking for help?"), _("Get support from online resources"));
+            //this.title = _("New logbook");
+            this.subtitle = _("Start adding assets and operations to track your own movements");
+            this.append ("application-vnd.openxmlformats-officedocument.presentationml.presentation", _("Add new asset"), _("Introduce the details of a new asset you want to register."));
+            this.append ("event-new", _("Add new operation"), _("Introduce the details of the operation you want to register."));
         }
     }
 }

@@ -60,7 +60,6 @@ namespace AppWidgets {
             // Open button
             open_btn = new Gtk.Button.from_icon_name ("document-open", Gtk.IconSize.LARGE_TOOLBAR);
             open_btn.tooltip_text = _("Open logbook");
-
             this.pack_start (open_btn);
 
             // Save button
@@ -77,13 +76,13 @@ namespace AppWidgets {
 
             // Add operation button
             add_operation_btn = new Gtk.Button.from_icon_name ("event-new", Gtk.IconSize.LARGE_TOOLBAR);
-            settings_menu_btn.tooltip_text = _("Add new operation");
+            add_operation_btn.tooltip_text = _("Add new operation");
             add_operation_btn.set_sensitive (false);
             this.pack_end (add_operation_btn);
 
             // Add asset button
             add_asset_btn = new Gtk.Button.from_icon_name ("application-vnd.openxmlformats-officedocument.presentationml.presentation", Gtk.IconSize.LARGE_TOOLBAR);
-            settings_menu_btn.tooltip_text = _("Add new asset");
+            add_asset_btn.tooltip_text = _("Add new asset");
             add_asset_btn.set_sensitive (false);
             this.pack_end (add_asset_btn);        
         }

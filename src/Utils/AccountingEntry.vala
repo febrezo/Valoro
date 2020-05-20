@@ -36,7 +36,7 @@ namespace AppUtils {
 		    this.datetime = datetime;
 		    this.asset_id = asset_id;
 		    this.asset_units = asset_units;
-            this.buying_price = selling_price;
+            this.buying_price = buying_price;
             this.selling_price = selling_price;
             this.benefit = selling_price - buying_price;
 	    }

@@ -7,197 +7,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.felixbrezo.Valoro\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-15 11:33+0200\n"
+"POT-Creation-Date: 2020-05-20 03:14+0200\n"
 "PO-Revision-Date: 2020-05-07 17:01+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Window.vala:87 src/Views/WelcomeView.vala:25
 #: data/com.felixbrezo.Valoro.desktop.in:4
-#: data/com.felixbrezo.Valoro.appdata.xml.in:6
+#: data/com.felixbrezo.Valoro.appdata.xml.in:6 src/Window.vala:57
+#: src/Views/WelcomeView.vala:29 src/Widgets/HeaderBar.vala:37
 msgid "Valoro"
 msgstr "Valoro"
-
-#: src/Window.vala:91 src/Views/WelcomeView.vala:26
-msgid "Create new logbook"
-msgstr ""
-
-#: src/Window.vala:97 src/Views/WelcomeView.vala:27
-msgid "Open logbook"
-msgstr ""
-
-#: src/Window.vala:103 src/Window.vala:308
-msgid "Save logbook"
-msgstr ""
-
-#: src/Window.vala:109
-msgid "Open menu"
-msgstr ""
-
-#: src/Window.vala:115 src/Window.vala:336
-msgid "Add new operation"
-msgstr ""
-
-#: src/Window.vala:122 src/Window.vala:478
-msgid "Add new asset"
-msgstr ""
-
-#: src/Window.vala:144
-msgid "Untitled book.json"
-msgstr ""
-
-#: src/Window.vala:147 src/Window.vala:525
-msgid "Currency"
-msgstr ""
-
-#: src/Window.vala:158
-msgid "Open logbook file"
-msgstr ""
-
-#: src/Window.vala:161 src/Window.vala:311
-msgid "Cancel"
-msgstr ""
-
-#: src/Window.vala:163
-msgid "Open"
-msgstr ""
-
-#: src/Window.vala:245
-#, c-format
-msgid ""
-"Could not parse the file. '%s' is corrupted. Have you edited it manually?"
-msgstr ""
-
-#: src/Window.vala:304 src/Window.vala:325
-#, c-format
-msgid "File saved: '%s'"
-msgstr ""
-
-#: src/Window.vala:313
-msgid "Save"
-msgstr ""
-
-#: src/Window.vala:337
-msgid "Introduce the details of the operation you want to register."
-msgstr ""
-
-#: src/Window.vala:352 src/Window.vala:486
-msgid "Add"
-msgstr ""
-
-#: src/Window.vala:359
-msgid "Temporal details"
-msgstr ""
-
-#: src/Window.vala:363
-msgid "Date: "
-msgstr ""
-
-#: src/Window.vala:367
-msgid "Time: "
-msgstr ""
-
-#: src/Window.vala:371
-msgid "Source"
-msgstr ""
-
-#: src/Window.vala:375 src/Window.vala:388
-msgid "Asset: "
-msgstr ""
-
-#: src/Window.vala:380 src/Window.vala:393
-msgid "Quantity: "
-msgstr ""
-
-#: src/Window.vala:384
-msgid "Destiny"
-msgstr ""
-
-#: src/Window.vala:397
-msgid "Asset real value: "
-msgstr ""
-
-#: src/Window.vala:469
-msgid "New operation added."
-msgstr ""
-
-#: src/Window.vala:479
-msgid "Introduce the details of a new asset you want to register."
-msgstr ""
-
-#: src/Window.vala:494
-msgid "Asset details"
-msgstr ""
-
-#: src/Window.vala:498
-msgid "Name: "
-msgstr ""
-
-#: src/Window.vala:501
-msgid "An asset"
-msgstr ""
-
-#: src/Window.vala:503
-msgid "Short name: "
-msgstr ""
-
-#: src/Window.vala:507
-msgid "XYZ"
-msgstr ""
-
-#: src/Window.vala:527
-msgid "Cryptoasset"
-msgstr ""
-
-#: src/Window.vala:529
-msgid "Category: "
-msgstr ""
-
-#: src/Window.vala:556
-msgid "New asset added."
-msgstr ""
-
-#: src/Views/WelcomeView.vala:25 data/com.felixbrezo.Valoro.appdata.xml.in:7
-#, fuzzy
-msgid "Manage and track your cryptoassets"
-msgstr "A tool to manage and track your cryptoassets"
-
-#: src/Views/WelcomeView.vala:26
-msgid "Start a new logbook to track your operations"
-msgstr ""
-
-#: src/Views/WelcomeView.vala:27
-msgid "Work with previously saved logbook files"
-msgstr ""
-
-#: src/Views/WelcomeView.vala:28 src/Widgets/SettingsMenu.vala:52
-msgid "Looking for help?"
-msgstr ""
-
-#: src/Views/WelcomeView.vala:28
-msgid "Get support from online resources"
-msgstr ""
-
-#: src/Views/WelcomeView.vala:52 src/Widgets/SettingsMenu.vala:81
-msgid "https://github.com/febrezo/valoro/master/doc/support/en/"
-msgstr ""
-
-#: src/Widgets/SettingsMenu.vala:36
-msgid "Theme"
-msgstr ""
-
-#: src/Widgets/SettingsMenu.vala:42
-msgid "Light background"
-msgstr ""
-
-#: src/Widgets/SettingsMenu.vala:43
-msgid "Dark background"
-msgstr ""
 
 #: data/com.felixbrezo.Valoro.desktop.in:5
 msgid "Personal Cryptoasset Tracking Tool"
@@ -219,8 +43,12 @@ msgstr ""
 msgid "Cryptocurrencies;Assets;Money;Personal"
 msgstr "Cryptocurrencies;Assets;Money;Personal"
 
-#: data/com.felixbrezo.Valoro.appdata.xml.in:9
+#: data/com.felixbrezo.Valoro.appdata.xml.in:7 src/Views/WelcomeView.vala:30
 #, fuzzy
+msgid "Manage and track your cryptoassets"
+msgstr "A tool to manage and track your cryptoassets"
+
+#: data/com.felixbrezo.Valoro.appdata.xml.in:9
 msgid ""
 "Valoro helps you on tracking the operations performed using cryptocurrencies "
 "in terms of acquisition and selling price. This task is particularly tricky "
@@ -232,6 +60,250 @@ msgstr ""
 "the acquisition and selling price of cryptocurrencies. This task is "
 "particularly tricky when involving exchange of cryptocurrencies from "
 "different assets."
+
+#: src/Window.vala:116 src/Widgets/AssetDialog.vala:26
+#: src/Widgets/AssetPanel.vala:48
+msgid "Currency"
+msgstr ""
+
+#: src/Window.vala:140
+msgid "Unsaved logbook"
+msgstr ""
+
+#: src/Window.vala:150
+msgid "Open logbook file"
+msgstr ""
+
+#: src/Window.vala:153 src/Window.vala:320
+msgid "Cancel"
+msgstr ""
+
+#: src/Window.vala:155
+msgid "Open"
+msgstr ""
+
+#: src/Window.vala:256
+#, c-format
+msgid ""
+"Could not parse the file. '%s' is corrupted. Have you edited it manually?"
+msgstr ""
+
+#: src/Window.vala:313 src/Window.vala:334
+#, c-format
+msgid "File saved: '%s'"
+msgstr ""
+
+#: src/Window.vala:317
+msgid "Save logbook"
+msgstr ""
+
+#: src/Window.vala:322
+msgid "Save"
+msgstr ""
+
+#: src/Window.vala:349
+msgid "New asset added."
+msgstr ""
+
+#: src/Window.vala:352
+msgid "Asset discarded."
+msgstr ""
+
+#: src/Window.vala:364
+msgid "New operation added."
+msgstr ""
+
+#: src/Window.vala:367
+msgid "Operation discarded."
+msgstr ""
+
+#: src/Window.vala:380 src/Widgets/SettingsMenu.vala:81
+msgid "https://github.com/febrezo/valoro/master/doc/support/en/"
+msgstr ""
+
+#: src/Views/WelcomeView.vala:31 src/Widgets/HeaderBar.vala:57
+msgid "Create new logbook"
+msgstr ""
+
+#: src/Views/WelcomeView.vala:31
+msgid "Start a new logbook to track your operations"
+msgstr ""
+
+#: src/Views/WelcomeView.vala:32 src/Widgets/HeaderBar.vala:62
+msgid "Open logbook"
+msgstr ""
+
+#: src/Views/WelcomeView.vala:32
+msgid "Work with previously saved logbook files"
+msgstr ""
+
+#: src/Views/WelcomeView.vala:33 src/Widgets/SettingsMenu.vala:52
+msgid "Looking for help?"
+msgstr ""
+
+#: src/Views/WelcomeView.vala:33
+msgid "Get support from online resources"
+msgstr ""
+
+#: src/Views/MainView.vala:90
+msgid "Operations list"
+msgstr ""
+
+#: src/Views/MainView.vala:95
+msgid "Accounting"
+msgstr ""
+
+#: src/Widgets/AccountingTable.vala:83 src/Widgets/OperationsTable.vala:83
+msgid "Date"
+msgstr ""
+
+#: src/Widgets/AccountingTable.vala:88
+msgid "Asset"
+msgstr ""
+
+#: src/Widgets/AccountingTable.vala:93
+msgid "Units"
+msgstr ""
+
+#: src/Widgets/AccountingTable.vala:99
+msgid "Buying price"
+msgstr ""
+
+#: src/Widgets/AccountingTable.vala:104
+msgid "Selling price "
+msgstr ""
+
+#: src/Widgets/AccountingTable.vala:109
+msgid "Benefit"
+msgstr ""
+
+#: src/Widgets/AccountingTable.vala:114
+msgid "%"
+msgstr ""
+
+#: src/Widgets/AssetDialog.vala:26
+msgid "Cryptoasset"
+msgstr ""
+
+#: src/Widgets/AssetDialog.vala:33 src/Widgets/HeaderBar.vala:86
+msgid "Add new asset"
+msgstr ""
+
+#: src/Widgets/AssetDialog.vala:34
+msgid "Introduce the details of a new asset you want to register."
+msgstr ""
+
+#: src/Widgets/AssetDialog.vala:42 src/Widgets/OperationDialog.vala:65
+msgid "Add"
+msgstr ""
+
+#: src/Widgets/AssetDialog.vala:50
+msgid "Asset details"
+msgstr ""
+
+#: src/Widgets/AssetDialog.vala:54
+msgid "Name: "
+msgstr ""
+
+#: src/Widgets/AssetDialog.vala:57
+msgid "An asset"
+msgstr ""
+
+#: src/Widgets/AssetDialog.vala:59
+msgid "Short name: "
+msgstr ""
+
+#: src/Widgets/AssetDialog.vala:63
+msgid "XYZ"
+msgstr ""
+
+#: src/Widgets/AssetDialog.vala:86
+msgid "Category: "
+msgstr ""
+
+#: src/Widgets/AssetPanel.vala:31
+msgid "Currencies"
+msgstr ""
+
+#: src/Widgets/AssetPanel.vala:34
+msgid "Cryptoassets"
+msgstr ""
+
+#: src/Widgets/AssetPanel.vala:40
+msgid "Average acquisition price: "
+msgstr ""
+
+#: src/Widgets/AssetPanel.vala:42
+msgid "Total acquisition value: "
+msgstr ""
+
+#: src/Widgets/HeaderBar.vala:68
+msgid "Save logbook as…"
+msgstr ""
+
+#: src/Widgets/HeaderBar.vala:74
+msgid "Open menu"
+msgstr ""
+
+#: src/Widgets/HeaderBar.vala:80 src/Widgets/OperationDialog.vala:42
+msgid "Add new operation"
+msgstr ""
+
+#: src/Widgets/OperationDialog.vala:43
+msgid "Introduce the details of the operation you want to register."
+msgstr ""
+
+#: src/Widgets/OperationDialog.vala:72
+msgid "Temporal details"
+msgstr ""
+
+#: src/Widgets/OperationDialog.vala:76
+msgid "Date: "
+msgstr ""
+
+#: src/Widgets/OperationDialog.vala:80
+msgid "Time: "
+msgstr ""
+
+#: src/Widgets/OperationDialog.vala:84 src/Widgets/OperationsTable.vala:87
+msgid "Source"
+msgstr ""
+
+#: src/Widgets/OperationDialog.vala:88 src/Widgets/OperationDialog.vala:104
+msgid "Asset: "
+msgstr ""
+
+#: src/Widgets/OperationDialog.vala:96 src/Widgets/OperationDialog.vala:112
+msgid "Quantity: "
+msgstr ""
+
+#: src/Widgets/OperationDialog.vala:100 src/Widgets/OperationsTable.vala:95
+msgid "Destiny"
+msgstr ""
+
+#: src/Widgets/OperationDialog.vala:116
+msgid "Asset real value: "
+msgstr ""
+
+#: src/Widgets/OperationsTable.vala:91 src/Widgets/OperationsTable.vala:99
+msgid " "
+msgstr ""
+
+#: src/Widgets/OperationsTable.vala:103
+msgid "Value"
+msgstr ""
+
+#: src/Widgets/SettingsMenu.vala:36
+msgid "Theme"
+msgstr ""
+
+#: src/Widgets/SettingsMenu.vala:42
+msgid "Light background"
+msgstr ""
+
+#: src/Widgets/SettingsMenu.vala:43
+msgid "Dark background"
+msgstr ""
 
 #~ msgid "Welcome to Valoro"
 #~ msgstr "Welcome to Valoro"

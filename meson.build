@@ -14,6 +14,8 @@ executable(
   'src/Window.vala',
   'src/Utils/AccountingEntry.vala',
   'src/Utils/Asset.vala',
+  'src/Utils/Movement.vala',
+  'src/Utils/Numbers.vala',
   'src/Utils/Operation.vala',
   'src/Views/WelcomeView.vala',
   'src/Views/MainView.vala',

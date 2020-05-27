@@ -2,13 +2,35 @@
 'skinparam classAttributeIconSize 0
 
 package AppUtils {
+    class AccountingEntry {
+        +DateTime datetime
+        +string asset_id
+        +double asset_units
+        +double buying_price
+        +double selling_price
+        +double benefit
+        +AccountingEntry ()
+        +AccountingEntry.from_splitted_datetime_string ()
+        +AccountingEntry.from_datetime_string ()
+        +to_string ()
+    }
+
     class Asset {
         +string name
         +string short_name
         +string type
         +double units
-        +double average_price
+        +double total_value
+        +ArrayList<Movement> movements
         +Asset ()
+        +to_string ()
+    }
+
+    class Movement {
+        +double units
+        +double unitary_price
+        +Movement ()
+        +to_string ()
     }
 
     class Operation {
@@ -21,18 +43,7 @@ package AppUtils {
         +Operation ()
         +Operation.from_splitted_datetime_string ()
         +Operation.from_datetime_string ()
-    }
-
-    class AccountingEntry {
-        +DateTime datetime
-        +string asset_id
-        +double asset_units
-        +double buying_price
-        +double selling_price
-        +double benefit
-        +AccountingEntry ()
-        +AccountingEntry.from_splitted_datetime_string ()
-        +AccountingEntry.from_datetime_string ()
+        +to_string ()
     }
 
     class AccountingEntryCorrupted {
@@ -42,7 +53,6 @@ package AppUtils {
     class OperationCorrupted {
         +CODE_01
     }
-
 }
 
 package AppWidgets {
@@ -65,7 +75,7 @@ package AppWidgets {
         -Gtk.ComboBox SpinButton dst_asset_combobox
         -Gtk.SpinButton dst_qty_spin
         -Gtk.SpinButton real_asset_spin
-        +ArrayList<Asset> assets
+        +string[] assets
         +OperationDialog ()
         +get_new_operation ()
         -on_comboboxes_changed ()
@@ -116,11 +126,11 @@ package AppViews {
         +MainView ()
         +update_view ()
     }
-    
+
     class NewLogbookView << (U,orchid) >> extends Granite.Widgets.Welcome {
         +NewLogbookView ()
     }
-    
+
     class WelcomeView << (U,orchid) >> extends Granite.Widgets.Welcome {
         +WelcomeView ()
     }
@@ -129,7 +139,7 @@ package AppViews {
 package Valoro {
     class Window << (U,orchid) >> extends Gtk.ApplicationWindow {
         -string file_path
-        #Gee.ArrayList<Asset> assets
+        #Gee.HashMap<string, Asset> assets
         #Gee.ArrayList<Operation> operations
         #Gee.ArrayList<AccountingEntry> entries
         -MainView main_view
@@ -137,6 +147,7 @@ package Valoro {
         -Granite.Widgets.Toast toast
         -HeaderBar header_bar
         +Window ()
+        -clean_asset_balance ()
         -create_main_view ()
         -on_new_clicked ()
         -on_open_clicked ()
@@ -144,7 +155,6 @@ package Valoro {
         -on_add_asset_clicked ()
         -on_add_operation_clicked ()
         -on_help_clicked ()
-        -on_welcome_clicked ()
         -show_toast ()
         -update_main_view ()
         -update_accounting_entries ()
@@ -159,19 +169,20 @@ package Valoro {
 
 Operation - OperationCorrupted : throws >
 AccountingEntry - AccountingEntryCorrupted : throws >
-MainView *-- AssetPanel : uses >
-MainView *-- OperationsTable : uses >
-MainView *-- AccountingTable : uses >
+MainView *-- AssetPanel : composes >
+MainView *-- OperationsTable : composes >
+MainView *-- AccountingTable : composes >
 HeaderBar *-- SettingsMenu : uses >
 Window "1" *-- "many" Operation : contains >
 Window "1" *-- "many" Asset : contains >
+Asset "1" *-- "many" Movement : contains >
 Window -- AccountingEntry : uses >
 Window *- HeaderBar : uses >
 Window *- AssetDialog : uses >
 Window *- OperationDialog : uses >
 Window *- MainView : uses >
-Window *- WelcomeView : uses >
-Window *- NewLogbookView : uses >
+Window *- WelcomeView : composes <
+MainView *- NewLogbookView : composes <
 ValoroApp - Window : uses >
 
 @enduml

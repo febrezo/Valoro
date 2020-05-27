@@ -30,7 +30,7 @@ namespace Valoro {
         // ==========
         private string file_path;
         ArrayList<Operation> operations;
-        ArrayList<Asset> assets;
+        HashMap<string, Asset> assets;
         ArrayList<AccountingEntry> entries;
 
         // Window elements
@@ -52,11 +52,11 @@ namespace Valoro {
         construct {
             // Set Windows defaults
             // --------------------
-            this.default_height = 600;
-            this.default_width = 800;
+            this.default_height = 800;
+            this.default_width = 1024;
             this.header_bar = new HeaderBar ();
             this.toast = new Granite.Widgets.Toast (_("Valoro"));
-            this.assets = new ArrayList<Asset> ();
+            this.assets = new HashMap<string, Asset> ();
             this.operations = new ArrayList<Operation> ();
             this.entries = new ArrayList<AccountingEntry> ();
 
@@ -72,7 +72,7 @@ namespace Valoro {
             this.header_bar.open_btn.clicked.connect (on_open_clicked);
             this.header_bar.save_btn.clicked.connect (on_save_clicked);
             this.header_bar.settings_menu_btn.clicked.connect (on_menu_clicked);
-            
+
             this.welcome_view.activated.connect ((index) => {
                 switch (index) {
                     case 0:
@@ -95,32 +95,19 @@ namespace Valoro {
 
         // Events
         // ======
-        private void on_welcome_clicked (int index) {
-            switch (index) {
-                case 0:
-                    this.on_new_clicked ();
-                    break;
-                case 1:
-                    this.on_open_clicked ();
-                    break;
-                case 2:
-                    this.on_help_clicked ();
-                    break;
-            }
-        }        
-        
         private void on_new_clicked () {
             // Remove main view and welcome view if present
             remove (overlay_panel);
             remove (welcome_view);
-            
-            // Call _deploy_main_layout with some data
-            assets = new ArrayList<Asset> ();
-            var euro = new Asset ("Euro", "EUR", _("Currency"), 0.0, 0.0);
-            assets.add (euro);
+            file_path = null;
+
+            // Initialize temporal storages
+            assets = new HashMap<string, Asset> ();
+            assets["EUR"] = new Asset ("Euro", "EUR", _("Currency"), 0.0, 0.0);
+
             operations = new ArrayList<Operation> ();
             entries = new ArrayList<AccountingEntry> ();
-            
+
             main_view = new MainView (assets, operations, entries);
             main_view.new_book_view.activated.connect ((index) => {
                 switch (index) {
@@ -132,7 +119,7 @@ namespace Valoro {
                         break;
                 }
             });
-            
+
             // Create overlay
             overlay_panel = new Gtk.Overlay ();
             overlay_panel.add_overlay (main_view);
@@ -172,7 +159,7 @@ namespace Valoro {
                     var root_object = parser.get_root ().get_object ();
 
                     // Reinitialize the assets
-                    assets = new Gee.ArrayList<Asset> ();
+                    assets = new HashMap<string, Asset> ();
 
                     // Get list of Json.Node members
                     var assets_list = root_object.get_array_member  ("assets");
@@ -186,11 +173,11 @@ namespace Valoro {
                             asset_object.get_string_member ("name"),
                             asset_object.get_string_member ("short_name"),
                             asset_object.get_string_member ("type"),
-                            asset_object.get_double_member ("units"),
-                            asset_object.get_double_member ("average_price")
+                            0.0,
+                            0.0
                         );
 
-                        assets.add (tmp_asset);
+                        assets[asset_object.get_string_member ("short_name")] = tmp_asset;
                     }
 
                     // Initialize operations
@@ -214,8 +201,8 @@ namespace Valoro {
 
                             var tmp_operation = new Operation.from_datetime_string (
                                 datetime,
-                                source_asset, source_qty,
-                                destiny_asset, destiny_qty,
+                                assets[source_asset], source_qty,
+                                assets[destiny_asset], destiny_qty,
                                 normalized_value
                             );
 
@@ -228,28 +215,38 @@ namespace Valoro {
                     // Notify correctly the reading of the file
                     this.file_path = path;
                     header_bar.subtitle = this.file_path;
-                    var message = "%s assets and %s operations parsed.".printf (
+                    var message = _("%s assets and %s operations parsed.").printf (
                         assets.size.to_string (),
                         operations.size.to_string ()
                     );
                     show_toast (message);
-                                        
+
                     // Remove main view and welcome view if present
                     remove (overlay_panel);
                     remove (welcome_view);
 
                     // Calculate accountancy
-                    var entries = update_accounting_entries ();
+                    update_accounting_entries ();
 
                     // Call _deploy_main_layout with some data
                     main_view = new MainView (assets, operations, entries);
-                    
+                    main_view.new_book_view.activated.connect ((index) => {
+                        switch (index) {
+                            case 0:
+                                this.on_add_asset_clicked ();
+                                break;
+                            case 1:
+                                this.on_add_operation_clicked ();
+                                break;
+                        }
+                    });
+
                     // Create overlay
                     overlay_panel = new Gtk.Overlay ();
                     overlay_panel.add_overlay (main_view);
                     overlay_panel.add_overlay (toast);
                     this.add (overlay_panel);
-                    
+
                     this.show_all ();
 
                     // Activate and deactivate buttons
@@ -271,13 +268,11 @@ namespace Valoro {
 
             // Create array of assets
             var assets_array = new Json.Array();
-            foreach(Asset a in assets) {
+            foreach(var a in assets.entries) {
                 var json_asset = new Json.Object();
-                json_asset.set_string_member("name", a.name);
-                json_asset.set_string_member("short_name", a.short_name);
-                json_asset.set_string_member("type", a.type);
-                json_asset.set_double_member("units", a.units);
-                json_asset.set_double_member("average_price", a.average_price);
+                json_asset.set_string_member("name", a.value.name);
+                json_asset.set_string_member("short_name", a.value.short_name);
+                json_asset.set_string_member("type", a.value.type);
 
                 assets_array.add_object_element(json_asset);
             }
@@ -287,9 +282,9 @@ namespace Valoro {
             foreach (Operation op in operations) {
                 var json_op = new Json.Object();
                 json_op.set_string_member("datetime", op.datetime.to_string ());
-                json_op.set_string_member("source_asset", op.source_asset);
+                json_op.set_string_member("source_asset", op.source_asset.short_name);
                 json_op.set_double_member("source_qty", op.source_qty);
-                json_op.set_string_member("destiny_asset", op.destiny_asset);
+                json_op.set_string_member("destiny_asset", op.destiny_asset.short_name);
                 json_op.set_double_member("destiny_qty", op.destiny_qty);
                 json_op.set_double_member("normalized_qty", op.normalized_qty);
 
@@ -306,12 +301,12 @@ namespace Valoro {
 
             var gen = new Json.Generator ();
             gen.set_root (root);
-            
+
             if (this.file_path != null) {
                 FileUtils.set_contents (this.file_path, gen.to_data (null));
                 this.header_bar.subtitle = this.file_path;
 
-                toast.title = _("File saved: '%s'".printf (this.file_path));
+                toast.title = _("File saved: '%s'").printf (this.file_path);
                 toast.send_notification ();
             } else {
                 var dialog = new Gtk.FileChooserDialog (
@@ -332,7 +327,7 @@ namespace Valoro {
                     FileUtils.set_contents (this.file_path, gen.to_data (null));
                     this.header_bar.subtitle = this.file_path;
 
-                    toast.title = _("File saved: '%s'");
+                    toast.title = _("File saved: '%s'").printf (this.file_path);
                     toast.send_notification ();
                 }
             }
@@ -344,9 +339,9 @@ namespace Valoro {
         private void on_add_asset_clicked () {
             var dialog = new AssetDialog (this);
             var tmp_asset = dialog.get_new_asset ();
-             
+
             if (tmp_asset != null) {
-                assets.add (tmp_asset);
+                assets[tmp_asset.short_name] = tmp_asset;
                 update_main_view (_("New asset added."));
                 header_bar.save_btn.set_sensitive (true);
             } else {
@@ -361,9 +356,10 @@ namespace Valoro {
             var tmp_operation = dialog.get_new_operation ();
 
             if (tmp_operation != null) {
-                operations.add (tmp_operation);                
+                operations.add (tmp_operation);
                 update_main_view (_("New operation added."));
-                header_bar.save_btn.set_sensitive (true);            
+
+                header_bar.save_btn.set_sensitive (true);
             } else {
                 update_main_view (_("Operation discarded."));
             }
@@ -391,43 +387,84 @@ namespace Valoro {
 
         private void update_main_view (string message) {
             show_toast (message);
-            
+
+            // Clean asset list before updating its values
+            clean_asset_balance ();
+
             // Calculate accountancy
-            entries = update_accounting_entries ();
-            
+            update_accounting_entries ();
+
             // Call _deploy_main_layout with some data
             main_view.update_view (assets, operations, entries);
+
+            main_view.new_book_view.activated.connect ((index) => {
+                switch (index) {
+                    case 0:
+                        this.on_add_asset_clicked ();
+                        break;
+                    case 1:
+                        this.on_add_operation_clicked ();
+                        break;
+                }
+            });
         }
 
-        private ArrayList<AccountingEntry> update_accounting_entries () {
-            var results = new ArrayList<AccountingEntry> ();
-            
-            // TODO: Build the hashmap
-            //var asset_movements = new HashMap<string,Asset> ();
-            
-            foreach (Operation op in operations) {
-                // TODO: Get the source asset and check if it is a cryptoasset
-                 
-                // TODO: If it is, it is a selling operation
-                // TODO: Get the number of units sold
-                // TODO: Iterate the Asset buying movements until the number of units reached is sold
-                // TODO: Calculate the final price
-                // TODO: Update the buying movements list removing spent assets
-                // TODO: Build the Accounting Entry
-                /*var tmp_entry = new AccountingEntry (
-                    op.datetime,
-                    op.source_asset,
-                    op.source_qty,
-                    TODO: calculate taking into account the previous buyings,
-                    op.normalized_qty,
-                    TODO: calculate,
-                );*/
-                
-                // TODO: Add to the list 
-                //results.add (tmp_entry);
+        private void clean_asset_balance () {
+            foreach (var item in assets.entries) {
+                item.value.movements = new Gee.ArrayList<Movement>();
+                item.value.units = 0.0;
+                item.value.total_value = 0.0;
             }
-            
-            return results;
+        }
+
+        private void update_accounting_entries () {
+            entries = new ArrayList<AccountingEntry> ();
+            foreach (Operation op in operations) {
+                // Buying operations
+                // -----------------
+                var tmp_movement = new Movement (
+                    op.destiny_qty,
+                    op.normalized_qty / op.destiny_qty
+                );
+
+                assets[op.destiny_asset.short_name].movements.add (tmp_movement);
+                assets[op.destiny_asset.short_name].total_value += op.normalized_qty;
+
+                // Accounting entries only performed for cryptoassets
+                // TODO: Accounting entries may be needed for any asset which is not the default one
+                if (assets[op.source_asset.short_name].type == _("Cryptoasset")) {
+                    var tmp_counter = op.source_qty;
+                    double buying_price = 0;
+
+                    foreach (var move in assets[op.source_asset.short_name].movements) {
+                        if (tmp_counter < move.units) {
+                            buying_price += tmp_counter * move.unitary_price;
+                            move.units = move.units - tmp_counter;
+                            break;
+                        } else {
+                            tmp_counter -= move.units;
+                            buying_price += move.units * move.unitary_price;
+
+                            // Set the value of the current movement to 0
+                            move.units = 0;
+                        }
+                    }
+
+                    // Building the accounting entry
+                    var tmp_entry = new AccountingEntry (
+                        op.datetime,
+                        op.source_asset.short_name,
+                        op.source_qty,
+                        buying_price,
+                        op.normalized_qty
+                    );
+                    entries.add (tmp_entry);
+                }
+
+                // Update units
+                assets[op.destiny_asset.short_name].units += op.destiny_qty;
+                assets[op.source_asset.short_name].units -= op.source_qty;
+            }
         }
     }
 }

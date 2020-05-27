@@ -4,7 +4,9 @@ src/Application.vala
 src/Window.vala
 src/Utils/AccountingEntry.vala
 src/Utils/Asset.vala
+src/Utils/Movement.vala
 src/Utils/Operation.vala
+src/Utils/Numbers.vala
 src/Views/WelcomeView.vala
 src/Views/MainView.vala
 src/Widgets/AccountingTable.vala

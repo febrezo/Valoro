@@ -42,7 +42,7 @@ namespace AppUtils {
 	    }
 
 	    // Constructor based on strings for date
-	    public AccountingEntry.from_splitted_datetime_string (string date, string asset_id, double asset_units, string time, double buying_price, double selling_price) throws AccountingEntryCorrupted.CODE_01 {
+	    public AccountingEntry.from_splitted_datetime_string (string date, string time, string asset_id, double asset_units, double buying_price, double selling_price) throws AccountingEntryCorrupted.CODE_01 {
 			this.datetime = new DateTime.from_iso8601 (
 				date.replace ("/", "-") + " " + time,
 				new TimeZone.local ()
@@ -54,7 +54,7 @@ namespace AppUtils {
 		    this.datetime = datetime;
 		    this.asset_id = asset_id;
 		    this.asset_units = asset_units;
-            this.buying_price = selling_price;
+            this.buying_price = buying_price;
             this.selling_price = selling_price;
             this.benefit = selling_price - buying_price;
 	    }
@@ -71,9 +71,21 @@ namespace AppUtils {
 
 		    this.asset_id = asset_id;
 		    this.asset_units = asset_units;
-            this.buying_price = selling_price;
+            this.buying_price = buying_price;
             this.selling_price = selling_price;
             this.benefit = selling_price - buying_price;
+	    }
+	    
+	    
+	    public string to_string () {
+	        return "\nENTRY\n-----\n\tDatetime: %s\n\tSource: %s %s\n\tBuying price: %s\n\tSelling price: %s\n\tBenefit: %s\n".printf (
+	            datetime.to_string (),
+	            format_double_to_string (asset_units, "%.4f"),
+	            asset_id,
+	            format_double_to_string (buying_price, "%.2f"),
+	            format_double_to_string (selling_price, "%.2f"),
+	            format_double_to_string (benefit, "%.2f")
+	        );
 	    }
     }
 }

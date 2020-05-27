@@ -19,17 +19,12 @@
 * Authored by: Félix Breo <felixbrezo@disroot.orgm>
 */
 
-namespace AppViews {
-    public class NewLogbookView : Granite.Widgets.Welcome {
-        public NewLogbookView () {
-            Object ();
-        } 
-        
-        construct {
-            //this.title = _("New logbook");
-            this.subtitle = _("Start by adding new assets and operations to track the effects of those movements");
-            this.append ("application-vnd.openxmlformats-officedocument.presentationml.presentation", _("Add new asset"), _("Introduce the details of a new asset you want to register."));
-            this.append ("event-new", _("Add new operation"), _("Introduce the details of the operation you want to register."));
+namespace AppUtils {
+    public string format_double_to_string (double num, string? format) {
+        if (format == null) {
+            format = "%.2f";
         }
+        char[] buf = new char[double.DTOSTR_BUF_SIZE];
+        return num.format(buf, format);
     }
 }

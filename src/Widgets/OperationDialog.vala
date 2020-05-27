@@ -25,9 +25,9 @@ using AppUtils;
 namespace AppWidgets {
     enum Column {
         ASSET_NAME
-    }      
-    
-    public class OperationDialog : Granite.MessageDialog { 
+    }
+
+    public class OperationDialog : Granite.MessageDialog {
         private Granite.Widgets.DatePicker date_picker;
         private Granite.Widgets.TimePicker time_picker;
         private Gtk.ComboBox src_asset_combobox;
@@ -35,17 +35,25 @@ namespace AppWidgets {
         private Gtk.ComboBox dst_asset_combobox;
         private Gtk.SpinButton dst_qty_spin;
         private Gtk.SpinButton real_asset_spin;
-        public ArrayList<Asset> assets {get; construct set;}
-        
-        public OperationDialog (Gtk.Window parent, ArrayList<Asset> assets) {
+        public ArrayList<string> string_assets {get; construct set;}
+        public HashMap<string, Asset> assets {get; construct set;}
+
+        public OperationDialog (Gtk.Window parent, HashMap<string, Asset> assets) {
+            // Prepare the property from the hashmap
+            var tmp_array = new ArrayList<string> ();
+            foreach (var element in assets.entries) {
+                tmp_array.add (element.value.short_name);
+            }
+
             Object (
                 primary_text: _("Add new operation"),
                 secondary_text: _("Introduce the details of the operation you want to register."),
                 buttons: Gtk.ButtonsType.CANCEL,
                 transient_for: parent,
+                string_assets: tmp_array,
                 assets: assets
             );
-        } 
+        }
 
         construct {
             this.image_icon = GLib.Icon.new_for_string ("event-new");
@@ -56,10 +64,10 @@ namespace AppWidgets {
             // Populate the list of assets
             var asset_liststore = new Gtk.ListStore (1, typeof (string));
 
-            foreach (Asset asset in assets){
+            foreach (var asset_short_name in string_assets) {
                 Gtk.TreeIter iter;
                 asset_liststore.append (out iter);
-                asset_liststore.set (iter, Column.ASSET_NAME, asset.short_name);
+                asset_liststore.set (iter, Column.ASSET_NAME, asset_short_name);
             }
 
             var suggested_button = new Gtk.Button.with_label (_("Add"));
@@ -92,7 +100,7 @@ namespace AppWidgets {
             // Add the cell representation for  the combobox
             src_asset_combobox.pack_start (cell, false);
             src_asset_combobox.set_attributes (cell, "text", 0);
-            
+
             var source_qty_label = new Gtk.Label (_("Quantity: "));
             source_qty_label.halign = Gtk.Align.END;
             src_qty_spin = new Gtk.SpinButton.with_range (0, 100000000, 0.00000001);
@@ -144,17 +152,20 @@ namespace AppWidgets {
 
             // Manage events linked to the combobox
             src_asset_combobox.changed.connect (on_comboboxes_change);
+            src_qty_spin.value_changed.connect (on_comboboxes_change);
             dst_asset_combobox.changed.connect (on_comboboxes_change);
+            dst_qty_spin.value_changed.connect (on_comboboxes_change);
 
             custom_bin.add (ask_for_info_widget);
             this.show_all ();
         }
-        
+
         public Operation? get_new_operation () {
             if (this.run () == Gtk.ResponseType.ACCEPT) {
                 // Auxiliar information
-                var src_active_asset = assets.get (src_asset_combobox.get_active ());
-                var dst_active_asset = assets.get (dst_asset_combobox.get_active ());
+                var dst_active_asset_name = string_assets.get (dst_asset_combobox.get_active ());
+                var src_active_asset_name = string_assets.get (src_asset_combobox.get_active ());
+
                 var provided_date = new GLib.DateTime (
                     new TimeZone.local (),
                     date_picker.date.get_year (),
@@ -163,34 +174,34 @@ namespace AppWidgets {
                     time_picker.time.get_hour (),
                     time_picker.time.get_minute (),
                     time_picker.time.get_seconds ()
-                ); 
+                );
 
                 // Grab values
                 return new Operation (
-		            provided_date,
-                    src_active_asset.short_name,
+		                provided_date,
+                    assets[src_active_asset_name],
                     src_qty_spin.get_value (),
-                    dst_active_asset.short_name,
+                    assets[dst_active_asset_name],
                     dst_qty_spin.get_value (),
                     real_asset_spin.get_value ()
                 );
             }
-
             return null;
         }
-        
+
         private void on_comboboxes_change () {
-            var src_active_asset = assets.get (src_asset_combobox.get_active ());
-            var dst_active_asset = assets.get (dst_asset_combobox.get_active ());
-            
-            if (src_active_asset.short_name != "EUR") {
-                if (dst_active_asset.short_name != "EUR") {
+            var src_active_asset_name = string_assets.get (src_asset_combobox.get_active ());
+            var dst_active_asset_name = string_assets.get (dst_asset_combobox.get_active ());
+
+            // TODO: Change "EUR" by any default asset
+            if (src_active_asset_name != "EUR") {
+                if (dst_active_asset_name != "EUR") {
                     real_asset_spin.set_sensitive (true);
                 } else {
                     real_asset_spin.set_value (dst_qty_spin.get_value ());
                     real_asset_spin.set_sensitive (false);
                 }
-            } else if (dst_active_asset.short_name != "EUR") {
+            } else if (dst_active_asset_name != "EUR") {
                 real_asset_spin.set_value (src_qty_spin.get_value ());
                 real_asset_spin.set_sensitive (false);
             } else {

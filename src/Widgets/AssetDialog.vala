@@ -35,7 +35,7 @@ namespace AppWidgets {
                 buttons: Gtk.ButtonsType.CANCEL,
                 transient_for: parent
             );
-        }  
+        }
         construct {
             this.image_icon = GLib.Icon.new_for_string ("application-vnd.openxmlformats-officedocument.presentationml.presentation");            
                 
@@ -69,6 +69,7 @@ namespace AppWidgets {
                 }
             });
             short_name_entry.changed.connect ( () => {
+                short_name_entry.set_text (short_name_entry.get_text ().up ());
                 if (name_entry.get_text () != null && short_name_entry.get_text () != null) {
                     suggested_button.set_sensitive (true);
                 }

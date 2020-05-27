@@ -27,25 +27,36 @@ namespace AppWidgets {
     public class AssetPanel : Granite.Widgets.SourceList {
         // Cosntructors
         // ============
-        public AssetPanel (ArrayList<Asset> assets) {
+        public AssetPanel (HashMap<string, Asset> assets) {
             var currency_category = new Granite.Widgets.SourceList.ExpandableItem (_("Currencies"));
             currency_category.expand_all ();
 
             var cryptoasset_category = new Granite.Widgets.SourceList.ExpandableItem (_("Cryptoassets"));
             cryptoasset_category.expand_all ();
 
-            foreach (Asset asset in assets) {
-                var new_item = new Granite.Widgets.SourceList.ExpandableItem ("%s".printf (asset.name));
-                new_item.badge = asset.units.to_string () + " " + asset.short_name;
+            foreach (var asset in assets.entries) {
+                var new_item = new Granite.Widgets.SourceList.ExpandableItem ("%s".printf (asset.value.name));
+                string format = "%.2f";
+                if (asset.value.type == _("Cryptoasset")) {
+                    format = "%.4f";
+                }
+                new_item.badge = AppUtils.format_double_to_string (asset.value.units, format) + " " + asset.value.short_name;
+
                 var avg_price_item = new Granite.Widgets.SourceList.Item (_("Average acquisition price: "));
-                avg_price_item.badge = asset.average_price.to_string ();
+                avg_price_item.badge = AppUtils.format_double_to_string(asset.value.total_value / asset.value.units, "%.2f");
+                if (avg_price_item.badge == "-nan" || avg_price_item.badge == "inf") {
+                    avg_price_item.badge = _("N/A");
+                } else {
+                    avg_price_item.badge += " " + "EUR";
+                }
+
                 var total_price_item = new Granite.Widgets.SourceList.Item (_("Total acquisition value: "));
-                total_price_item.badge = (asset.average_price * asset.units).to_string ();
+                total_price_item.badge = AppUtils.format_double_to_string(asset.value.total_value, "%.2f") + " " + "EUR";
 
                 new_item.add (avg_price_item);
                 new_item.add (total_price_item);
 
-                if (asset.type == _("Currency")) {
+                if (asset.value.type == _("Currency")) {
                     currency_category.add (new_item);
                 } else {
                     cryptoasset_category.add (new_item);

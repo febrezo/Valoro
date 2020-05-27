@@ -41,7 +41,6 @@ namespace AppWidgets {
             view = new Gtk.TreeView ();
             view.set_reorderable (true);
             view.set_headers_clickable (true);
-            this.setup_treeview (entries);
 
             //var scrolled_view = new Gtk.ScrolledWindow (null, null);
             //scrolled_view.add (view);
@@ -50,10 +49,24 @@ namespace AppWidgets {
             column_spacing = 12;
             row_spacing = 12;
             halign = Gtk.Align.CENTER;
-            attach (view, 0, 1);
+            if (entries.size > 0) {
+                this.setup_treeview (entries);
+                attach (view, 0, 1);
+                var selection = view.get_selection ();
+                selection.changed.connect (this.on_changed);
+            } else {
+                var message_grid = new Gtk.Grid ();
+                message_grid.margin_top = 12;
+                message_grid.margin_bottom = 12;
+                message_grid.column_spacing = 12;
+                message_grid.row_spacing = 12;
+                message_grid.halign = Gtk.Align.CENTER;
 
-            var selection = view.get_selection ();
-            selection.changed.connect (this.on_changed);
+                var message_label = new Gtk.Label (_("No accounting entry found yet."));
+                message_grid.attach (message_label, 0, 1);
+
+                attach (message_grid, 0, 1);
+            }
         }
 
         private void setup_treeview (ArrayList<AccountingEntry> entries) {
@@ -62,22 +75,29 @@ namespace AppWidgets {
                 7,
                 typeof (string),
                 typeof (string),
-                typeof (float),
-                typeof (float),
-                typeof (float),
-                typeof (float),
-                typeof (float)
+                typeof (string),
+                typeof (string),
+                typeof (string),
+                typeof (string),
+                typeof (string)
             );
             view.set_model (listmodel);
 
             var bold_cell = new Gtk.CellRendererText ();
-
             /* 'weight' refers to font boldness.
              *  400 is normal.
              *  700 is bold.
              */
             bold_cell.set ("weight_set", true);
             bold_cell.set ("weight", 700);
+
+            var euro_cell = new Gtk.CellRendererText ();
+            euro_cell.alignment = Pango.Alignment.RIGHT;
+
+            var euro_cell_bold = new Gtk.CellRendererText ();
+            euro_cell_bold.alignment = Pango.Alignment.RIGHT;
+            euro_cell_bold.set ("weight_set", true);
+            euro_cell_bold.set ("weight", 700);
 
             // Columns
             view.insert_column_with_attributes (-1, _("Date"),
@@ -89,35 +109,34 @@ namespace AppWidgets {
                                                     bold_cell,
                                                     "text",
                                                     Column.ASSET_ID);
-                                                    
+
             view.insert_column_with_attributes (-1, _("Units"),
                                                     new Gtk.CellRendererText (),
                                                     "text",
-                                                    Column.BUYING_PRICE);
-
+                                                    Column.ASSET_UNITS);
 
             view.insert_column_with_attributes (-1, _("Buying price"),
-                                                    new Gtk.CellRendererText (),
+                                                    euro_cell,
                                                     "text",
                                                     Column.BUYING_PRICE);
 
             view.insert_column_with_attributes (-1, _("Selling price "),
-                                                    new Gtk.CellRendererText (),
-                                                    "text", 
+                                                    euro_cell,
+                                                    "text",
                                                     Column.SELLING_PRICE);
 
             view.insert_column_with_attributes (-1, _("Benefit"),
-                                                    bold_cell, 
+                                                    euro_cell_bold,
                                                     "text",
                                                     Column.BENEFIT_TOTAL);
 
-            view.insert_column_with_attributes (-1, _("%"),
-                                                    bold_cell, 
+            /*view.insert_column_with_attributes (-1, _("%"),
+                                                    bold_cell,
                                                     "text",
-                                                    Column.BENEFIT_PERCENTAGE);
+                                                    Column.BENEFIT_PERCENTAGE);*/
 
 
-            // Insert the items into the ListStore 
+            // Insert the items into the ListStore
             Gtk.TreeIter iter;
             for (int i = 0; i < entries.size; i++) {
                 listmodel.append (out iter);
@@ -126,11 +145,11 @@ namespace AppWidgets {
                     iter,
                     Column.DATETIME, entries.get (i).datetime.to_string (),
                     Column.ASSET_ID, entries.get (i).asset_id,
-                    Column.ASSET_UNITS, entries.get (i).asset_units,
-                    Column.BUYING_PRICE, entries.get (i).buying_price,
-                    Column.SELLING_PRICE, entries.get (i).selling_price,
-                    Column.BENEFIT_TOTAL, entries.get (i).benefit,
-                    Column.BENEFIT_PERCENTAGE, entries.get (i).benefit / entries.get (i).buying_price * 100.0
+                    Column.ASSET_UNITS, AppUtils.format_double_to_string (entries.get (i).asset_units, "%.8f") + " " + entries.get (i).asset_id,
+                    Column.BUYING_PRICE, AppUtils.format_double_to_string (entries.get (i).buying_price, "%.2f") + " " + "EUR",
+                    Column.SELLING_PRICE, AppUtils.format_double_to_string (entries.get (i).selling_price, "%.2f") + " " + "EUR",
+                    Column.BENEFIT_TOTAL, AppUtils.format_double_to_string (entries.get (i).benefit, "%.2f") + " " + "EUR"
+                    //Column.BENEFIT_PERCENTAGE, entries.get (i).benefit / entries.get (i).buying_price * 100.0
                 );
             }
         }

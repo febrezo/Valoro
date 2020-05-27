@@ -19,21 +19,35 @@
 * Authored by: Félix Breo <felixbrezo@disroot.orgm>
 */
 
+using Gee;
+
 namespace AppUtils {
     public class Asset {
         public string name;
         public string short_name;
         public string type;
         public double units;
-        public double average_price;
+        public double total_value;
+        public ArrayList<Movement> movements;
 
-	    public Asset (string name, string short_name, string type, double units, double average_price) {
+	    public Asset (string name, string short_name, string type, double units, double total_value) {
 		    this.name = name;
-		    this.short_name = short_name;
+		    this.short_name = short_name.up ();
 		    this.type = type;
 		    this.units = units;
-		    this.average_price = average_price;
+		    this.total_value = total_value;
+		    this.movements = new ArrayList<Movement> ();
+	    }
+
+	    public string to_string () {
+	        return "\nASSET\n-----\n\tName: %s (%s)\n\tType: %s\n\tUnits: %s\n\tAverage price: %s\n\tTotal movements: %s\n".printf (
+	            name,
+	            short_name,
+	            type,
+	            format_double_to_string (units, "%.4f"),
+	            format_double_to_string (total_value / units, "%.2f"),
+	            movements.size.to_string ()
+	        );
 	    }
     }
 }
-

@@ -63,21 +63,23 @@ namespace AppWidgets {
                 6,
                 typeof (string),
                 typeof (string),
-                typeof (float),
                 typeof (string),
-                typeof (float),
-                typeof (float)
+                typeof (string),
+                typeof (string),
+                typeof (string)
             );
             view.set_model (listmodel);
 
             var bold_cell = new Gtk.CellRendererText ();
-
             /* 'weight' refers to font boldness.
              *  400 is normal.
              *  700 is bold.
              */
             bold_cell.set ("weight_set", true);
             bold_cell.set ("weight", 700);
+
+            var euro_cell = new Gtk.CellRendererText ();
+            euro_cell.alignment = Gtk.Alignment.RIGHT;
 
             // Columns
             view.insert_column_with_attributes (-1, _("Date"),
@@ -101,7 +103,7 @@ namespace AppWidgets {
                                                     "text", Column.DESTINY_QTY);
 
             view.insert_column_with_attributes (-1, _("Value"),
-                                                    new Gtk.CellRendererText (),
+                                                    euro_cell,
                                                     "text", Column.NORMALIZED_QTY);
 
             // Insert the items into the ListStore
@@ -109,14 +111,35 @@ namespace AppWidgets {
             for (int i = 0; i < operations.size; i++) {
                 listmodel.append (out iter);
 
+                string source_qty;
+                if (operations.get (i).source_asset.type == _("Currency")) {
+                    // Up to 2 decimal values
+                    source_qty = AppUtils.format_double_to_string (operations.get (i).source_qty, "%.2f");
+                }
+                else {
+                    // Up to 8 decimal values
+                    source_qty = AppUtils.format_double_to_string (operations.get (i).source_qty, "%.8f");
+                }
+
+                string destiny_qty;
+                if (operations.get (i).destiny_asset.type == _("Currency")) {
+                    // Up to 2 decimal values
+                    destiny_qty = AppUtils.format_double_to_string (operations.get (i).destiny_qty, "%.2f");
+                }
+                else {
+                    // Up to 8 decimal values
+                    destiny_qty = AppUtils.format_double_to_string (operations.get (i).destiny_qty, "%.8f");
+                }
+
+
                 listmodel.set (
                     iter,
                     Column.DATETIME, operations.get (i).datetime.to_string (),
-                    Column.SOURCE_ASSET, operations.get (i).source_asset,
-                    Column.SOURCE_QTY, operations.get (i).source_qty,
-                    Column.DESTINY_ASSET, operations.get (i).destiny_asset,
-                    Column.DESTINY_QTY, operations.get (i).destiny_qty,
-                    Column.NORMALIZED_QTY, operations.get (i).normalized_qty
+                    Column.SOURCE_ASSET, operations.get (i).source_asset.short_name,
+                    Column.SOURCE_QTY, source_qty,
+                    Column.DESTINY_ASSET, operations.get (i).destiny_asset.short_name,
+                    Column.DESTINY_QTY, destiny_qty,
+                    Column.NORMALIZED_QTY, AppUtils.format_double_to_string (operations.get (i).normalized_qty, "%.2f") + " " + "EUR"
                 );
             }
         }

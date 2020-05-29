@@ -9,6 +9,7 @@ src/Utils/Operation.vala
 src/Utils/Numbers.vala
 src/Views/WelcomeView.vala
 src/Views/MainView.vala
+src/Views/NewLogbookView.vala
 src/Widgets/AccountingTable.vala
 src/Widgets/AssetDialog.vala
 src/Widgets/AssetPanel.vala

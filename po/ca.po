@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.felixbrezo.Valoro\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-27 04:50+0200\n"
+"POT-Creation-Date: 2020-05-29 20:42+0200\n"
 "PO-Revision-Date: 2020-05-20 00:45+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -31,9 +31,9 @@ msgid ""
 "A tool that helps user to manage and track operations with their own "
 "cryptoassets by logging the data related to the different operations."
 msgstr ""
-"Una eina que ajuda a l'usuari a gestionar el seguiment de les operacions fet amb "
-"els seus criptoactius registrant les dades relacionades amb les diferents operacions."
-
+"Una eina que ajuda a l'usuari a gestionar el seguiment de les operacions fet "
+"amb els seus criptoactius registrant les dades relacionades amb les "
+"diferents operacions."
 
 #: data/com.felixbrezo.Valoro.desktop.in:9
 msgid "archive-manager"
@@ -54,7 +54,7 @@ msgid ""
 "when involving exchange of cryptocurrencies from different assets if you "
 "want to fully comply with tax regulations."
 msgstr ""
-""Valoro t'ajuda a fer el seguiment de les operacions realitzades amb "
+"Valoro t'ajuda a fer el seguiment de les operacions realitzades amb "
 "criptoactius en termes de preu d'adquisició i venda. Aquesta tasca és "
 "particularment complicada quan es tracta d'intercanvi de criptomonedes "
 "diferents si es vol complir plenament la normativa fiscal."
@@ -91,7 +91,8 @@ msgstr "%s actius and %s operacions recuperat."
 msgid ""
 "Could not parse the file. '%s' is corrupted. Have you edited it manually?"
 msgstr ""
-"No s'ha pogut analitzar el fitxer. '%s' està danyat. Que l’heu editat manualment?"
+"No s'ha pogut analitzar el fitxer. '%s' està danyat. Que l’heu editat "
+"manualment?"
 
 #: src/Window.vala:309 src/Window.vala:330
 #, c-format
@@ -108,7 +109,7 @@ msgstr "Guardar"
 
 #: src/Window.vala:345
 msgid "New asset added."
-msgstr "No actiu afegit."
+msgstr "Nou actiu afegit."
 
 #: src/Window.vala:348
 msgid "Asset discarded."
@@ -163,6 +164,32 @@ msgstr "Lista operacions"
 msgid "Accounting"
 msgstr "Contabilitat"
 
+#: src/Views/NewLogbookView.vala:30
+msgid ""
+"Start by adding new assets and operations to track the effects of those "
+"movements"
+msgstr ""
+"Comença per afegir nous actius i operacions per fer el seguiment dels efectes de aquests "
+"moviments"
+
+#: src/Views/NewLogbookView.vala:31 src/Widgets/AssetDialog.vala:33
+#: src/Widgets/HeaderBar.vala:85
+msgid "Add new asset"
+msgstr "Afegir nou actiu"
+
+#: src/Views/NewLogbookView.vala:31 src/Widgets/AssetDialog.vala:34
+msgid "Introduce the details of a new asset you want to register."
+msgstr "Introduïu les dades del nou recurs que voleu registrar."
+
+#: src/Views/NewLogbookView.vala:32 src/Widgets/HeaderBar.vala:79
+#: src/Widgets/OperationDialog.vala:49
+msgid "Add new operation"
+msgstr "Afegir nova operació"
+
+#: src/Views/NewLogbookView.vala:32 src/Widgets/OperationDialog.vala:50
+msgid "Introduce the details of the operation you want to register."
+msgstr "Introduïu els detalls de l’operació que voleu registrar."
+
 #: src/Widgets/AccountingTable.vala:65
 msgid "No accounting entry found yet."
 msgstr "Encara no s'ha trobat cap entrada comptable."
@@ -190,14 +217,6 @@ msgstr "Preu de venda"
 #: src/Widgets/AccountingTable.vala:128
 msgid "Benefit"
 msgstr "Benefici"
-
-#: src/Widgets/AssetDialog.vala:33 src/Widgets/HeaderBar.vala:85
-msgid "Add new asset"
-msgstr "Afegir nou actiu"
-
-#: src/Widgets/AssetDialog.vala:34
-msgid "Introduce the details of a new asset you want to register."
-msgstr "Introduïu les dades del nou recurs que voleu registrar."
 
 #: src/Widgets/AssetDialog.vala:42 src/Widgets/OperationDialog.vala:73
 msgid "Add"
@@ -254,14 +273,6 @@ msgstr "Guardar llibre"
 #: src/Widgets/HeaderBar.vala:73
 msgid "Open menu"
 msgstr "Obrir menú"
-
-#: src/Widgets/HeaderBar.vala:79 src/Widgets/OperationDialog.vala:49
-msgid "Add new operation"
-msgstr "Afegir nova operació"
-
-#: src/Widgets/OperationDialog.vala:50
-msgid "Introduce the details of the operation you want to register."
-msgstr "Introduïu els detalls de l’operació que voleu registrar."
 
 #: src/Widgets/OperationDialog.vala:80
 msgid "Temporal details"

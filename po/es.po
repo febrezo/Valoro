@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.felixbrezo.Valoro\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-27 04:50+0200\n"
+"POT-Creation-Date: 2020-05-29 20:42+0200\n"
 "PO-Revision-Date: 2020-05-07 17:01+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -165,6 +165,32 @@ msgstr "Lista de operaciones"
 msgid "Accounting"
 msgstr "Contabilidad"
 
+#: src/Views/NewLogbookView.vala:30
+msgid ""
+"Start by adding new assets and operations to track the effects of those "
+"movements"
+msgstr ""
+"Empieza añadiendo nuevos activos y operaciones para realizar el seguimiento de "
+"estos movimientos"
+
+#: src/Views/NewLogbookView.vala:31 src/Widgets/AssetDialog.vala:33
+#: src/Widgets/HeaderBar.vala:85
+msgid "Add new asset"
+msgstr "Añadir nuevo activo"
+
+#: src/Views/NewLogbookView.vala:31 src/Widgets/AssetDialog.vala:34
+msgid "Introduce the details of a new asset you want to register."
+msgstr "Introduce los detalles de la operación que quieres registrar."
+
+#: src/Views/NewLogbookView.vala:32 src/Widgets/HeaderBar.vala:79
+#: src/Widgets/OperationDialog.vala:49
+msgid "Add new operation"
+msgstr "Añadir operación"
+
+#: src/Views/NewLogbookView.vala:32 src/Widgets/OperationDialog.vala:50
+msgid "Introduce the details of the operation you want to register."
+msgstr "Introduce los detalles de la operación que quieres registrar."
+
 #: src/Widgets/AccountingTable.vala:65
 msgid "No accounting entry found yet."
 msgstr "No se han encontrado asientos contables todavía."
@@ -192,14 +218,6 @@ msgstr "Precio de venta"
 #: src/Widgets/AccountingTable.vala:128
 msgid "Benefit"
 msgstr "Beneficio"
-
-#: src/Widgets/AssetDialog.vala:33 src/Widgets/HeaderBar.vala:85
-msgid "Add new asset"
-msgstr "Añadir nuevo activo"
-
-#: src/Widgets/AssetDialog.vala:34
-msgid "Introduce the details of a new asset you want to register."
-msgstr "Introduce los detalles de la operación que quieres registrar."
 
 #: src/Widgets/AssetDialog.vala:42 src/Widgets/OperationDialog.vala:73
 msgid "Add"
@@ -256,14 +274,6 @@ msgstr "Guardar libro como…"
 #: src/Widgets/HeaderBar.vala:73
 msgid "Open menu"
 msgstr "Abrir menú"
-
-#: src/Widgets/HeaderBar.vala:79 src/Widgets/OperationDialog.vala:49
-msgid "Add new operation"
-msgstr "Añadir operación"
-
-#: src/Widgets/OperationDialog.vala:50
-msgid "Introduce the details of the operation you want to register."
-msgstr "Introduce los detalles de la operación que quieres registrar."
 
 #: src/Widgets/OperationDialog.vala:80
 msgid "Temporal details"

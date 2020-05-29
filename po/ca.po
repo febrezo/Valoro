@@ -24,13 +24,16 @@ msgstr "Valoro"
 
 #: data/com.felixbrezo.Valoro.desktop.in:5
 msgid "Personal Cryptoasset Tracking Tool"
-msgstr ""
+msgstr "Eina personal per al seguiment de criptoactius"
 
 #: data/com.felixbrezo.Valoro.desktop.in:6
 msgid ""
 "A tool that helps user to manage and track operations with their own "
 "cryptoassets by logging the data related to the different operations."
 msgstr ""
+"Una eina que ajuda a l'usuari a gestionar el seguiment de les operacions fet amb "
+"els seus criptoactius registrant les dades relacionades amb les diferents operacions."
+
 
 #: data/com.felixbrezo.Valoro.desktop.in:9
 msgid "archive-manager"
@@ -42,7 +45,7 @@ msgstr "Criptomonedas;Actius;Diners;Personal"
 
 #: data/com.felixbrezo.Valoro.appdata.xml.in:7 src/Views/WelcomeView.vala:30
 msgid "Manage and track your cryptoassets"
-msgstr ""
+msgstr "Gestiona els teus criptoactius"
 
 #: data/com.felixbrezo.Valoro.appdata.xml.in:9
 msgid ""
@@ -51,6 +54,10 @@ msgid ""
 "when involving exchange of cryptocurrencies from different assets if you "
 "want to fully comply with tax regulations."
 msgstr ""
+""Valoro t'ajuda a fer el seguiment de les operacions realitzades amb "
+"criptoactius en termes de preu d'adquisició i venda. Aquesta tasca és "
+"particularment complicada quan es tracta d'intercanvi de criptomonedes "
+"diferents si es vol complir plenament la normativa fiscal."
 
 #: src/Window.vala:106 src/Widgets/AssetDialog.vala:26
 #: src/Widgets/AssetPanel.vala:59 src/Widgets/OperationsTable.vala:115
@@ -60,249 +67,250 @@ msgstr "Moneda"
 
 #: src/Window.vala:130
 msgid "Unsaved logbook"
-msgstr ""
+msgstr "Fitxer no guardat"
 
 #: src/Window.vala:140
 msgid "Open logbook file"
-msgstr ""
+msgstr "Obrir el fitxer del llibre"
 
 #: src/Window.vala:143 src/Window.vala:316
 msgid "Cancel"
-msgstr ""
+msgstr "Cancel·lar"
 
 #: src/Window.vala:145
 msgid "Open"
-msgstr ""
+msgstr "Obrir"
 
 #: src/Window.vala:218
 #, c-format
 msgid "%s assets and %s operations parsed."
-msgstr ""
+msgstr "%s actius and %s operacions recuperat."
 
 #: src/Window.vala:258
 #, c-format
 msgid ""
 "Could not parse the file. '%s' is corrupted. Have you edited it manually?"
 msgstr ""
+"No s'ha pogut analitzar el fitxer. '%s' està danyat. Que l’heu editat manualment?"
 
 #: src/Window.vala:309 src/Window.vala:330
 #, c-format
 msgid "File saved: '%s'"
-msgstr ""
+msgstr "Fitxer guardat: '%s'"
 
 #: src/Window.vala:313
 msgid "Save logbook"
-msgstr ""
+msgstr "Guardar fitxer"
 
 #: src/Window.vala:318
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: src/Window.vala:345
 msgid "New asset added."
-msgstr ""
+msgstr "No actiu afegit."
 
 #: src/Window.vala:348
 msgid "Asset discarded."
-msgstr ""
+msgstr "Actiu descartat."
 
 #: src/Window.vala:360
 msgid "New operation added."
-msgstr ""
+msgstr "Nova operació afegida"
 
 #: src/Window.vala:364
 msgid "Operation discarded."
-msgstr ""
+msgstr "Operació descartada"
 
 #: src/Window.vala:377 src/Widgets/SettingsMenu.vala:81
 msgid "https://github.com/febrezo/valoro/master/doc/support/en/"
-msgstr ""
+msgstr "https://github.com/febrezo/valoro/master/doc/support/ca/"
 
 #: src/Window.vala:435 src/Widgets/AssetDialog.vala:26
 #: src/Widgets/AssetPanel.vala:40
 msgid "Cryptoasset"
-msgstr ""
+msgstr "Criptoactiu"
 
 #: src/Views/WelcomeView.vala:31 src/Widgets/HeaderBar.vala:57
 msgid "Create new logbook"
-msgstr ""
+msgstr "Crear nou fitxer"
 
 #: src/Views/WelcomeView.vala:31
 msgid "Start a new logbook to track your operations"
-msgstr ""
+msgstr "Crea un fitxer nou per fer el seguiment de les vostres operacions"
 
 #: src/Views/WelcomeView.vala:32 src/Widgets/HeaderBar.vala:62
 msgid "Open logbook"
-msgstr ""
+msgstr "Obrir fitxer"
 
 #: src/Views/WelcomeView.vala:32
 msgid "Work with previously saved logbook files"
-msgstr ""
+msgstr "Treballa amb fitxers guardat prèviament"
 
 #: src/Views/WelcomeView.vala:33 src/Widgets/SettingsMenu.vala:52
 msgid "Looking for help?"
-msgstr ""
+msgstr "Que buscas ajuda?"
 
 #: src/Views/WelcomeView.vala:33
 msgid "Get support from online resources"
-msgstr ""
+msgstr "Obtén assistència de recursos en línia"
 
 #: src/Views/MainView.vala:90
 msgid "Operations list"
-msgstr ""
+msgstr "Lista operacions"
 
 #: src/Views/MainView.vala:95
 msgid "Accounting"
-msgstr ""
+msgstr "Contabilitat"
 
 #: src/Widgets/AccountingTable.vala:65
 msgid "No accounting entry found yet."
-msgstr ""
+msgstr "Encara no s'ha trobat cap entrada comptable."
 
 #: src/Widgets/AccountingTable.vala:103 src/Widgets/OperationsTable.vala:85
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: src/Widgets/AccountingTable.vala:108
 msgid "Asset"
-msgstr ""
+msgstr "Actiu"
 
 #: src/Widgets/AccountingTable.vala:113
 msgid "Units"
-msgstr ""
+msgstr "Unitats"
 
 #: src/Widgets/AccountingTable.vala:118
 msgid "Buying price"
-msgstr ""
+msgstr "Preu de compra"
 
 #: src/Widgets/AccountingTable.vala:123
 msgid "Selling price "
-msgstr ""
+msgstr "Preu de venda"
 
 #: src/Widgets/AccountingTable.vala:128
 msgid "Benefit"
-msgstr ""
+msgstr "Benefici"
 
 #: src/Widgets/AssetDialog.vala:33 src/Widgets/HeaderBar.vala:85
 msgid "Add new asset"
-msgstr ""
+msgstr "Afegir nou actiu"
 
 #: src/Widgets/AssetDialog.vala:34
 msgid "Introduce the details of a new asset you want to register."
-msgstr ""
+msgstr "Introduïu les dades del nou recurs que voleu registrar."
 
 #: src/Widgets/AssetDialog.vala:42 src/Widgets/OperationDialog.vala:73
 msgid "Add"
-msgstr ""
+msgstr "Afegir"
 
 #: src/Widgets/AssetDialog.vala:50
 msgid "Asset details"
-msgstr ""
+msgstr "Detalls de l'actiu"
 
 #: src/Widgets/AssetDialog.vala:54
 msgid "Name: "
-msgstr ""
+msgstr "Nom: "
 
 #: src/Widgets/AssetDialog.vala:57
 msgid "An asset"
-msgstr ""
+msgstr "Un actiu"
 
 #: src/Widgets/AssetDialog.vala:59
 msgid "Short name: "
-msgstr ""
+msgstr "Nom curt: "
 
 #: src/Widgets/AssetDialog.vala:63
 msgid "XYZ"
-msgstr ""
+msgstr "XYZ"
 
 #: src/Widgets/AssetDialog.vala:87
 msgid "Category: "
-msgstr ""
+msgstr "Categoria: "
 
 #: src/Widgets/AssetPanel.vala:31
 msgid "Currencies"
-msgstr ""
+msgstr "Monedes"
 
 #: src/Widgets/AssetPanel.vala:34
 msgid "Cryptoassets"
-msgstr ""
+msgstr "Criptoactius"
 
 #: src/Widgets/AssetPanel.vala:45
 msgid "Average acquisition price: "
-msgstr ""
+msgstr "Valor mitjà d'adquisició"
 
 #: src/Widgets/AssetPanel.vala:48
 msgid "N/A"
-msgstr ""
+msgstr "N/A"
 
 #: src/Widgets/AssetPanel.vala:53
 msgid "Total acquisition value: "
-msgstr ""
+msgstr "Valor total d'adquisició"
 
 #: src/Widgets/HeaderBar.vala:67
 msgid "Save logbook as…"
-msgstr ""
+msgstr "Guardar llibre"
 
 #: src/Widgets/HeaderBar.vala:73
 msgid "Open menu"
-msgstr ""
+msgstr "Obrir menú"
 
 #: src/Widgets/HeaderBar.vala:79 src/Widgets/OperationDialog.vala:49
 msgid "Add new operation"
-msgstr ""
+msgstr "Afegir nova operació"
 
 #: src/Widgets/OperationDialog.vala:50
 msgid "Introduce the details of the operation you want to register."
-msgstr ""
+msgstr "Introduïu els detalls de l’operació que voleu registrar."
 
 #: src/Widgets/OperationDialog.vala:80
 msgid "Temporal details"
-msgstr ""
+msgstr "Detalls temporals"
 
 #: src/Widgets/OperationDialog.vala:84
 msgid "Date: "
-msgstr ""
+msgstr "Dades: "
 
 #: src/Widgets/OperationDialog.vala:88
 msgid "Time: "
-msgstr ""
+msgstr "Temps: "
 
 #: src/Widgets/OperationDialog.vala:92 src/Widgets/OperationsTable.vala:89
 msgid "Source"
-msgstr ""
+msgstr "Font"
 
 #: src/Widgets/OperationDialog.vala:96 src/Widgets/OperationDialog.vala:112
 msgid "Asset: "
-msgstr ""
+msgstr "Actiu: "
 
 #: src/Widgets/OperationDialog.vala:104 src/Widgets/OperationDialog.vala:120
 msgid "Quantity: "
-msgstr ""
+msgstr "Quantitat: "
 
 #: src/Widgets/OperationDialog.vala:108 src/Widgets/OperationsTable.vala:97
 msgid "Destiny"
-msgstr ""
+msgstr "Destí"
 
 #: src/Widgets/OperationDialog.vala:124
 msgid "Asset real value: "
-msgstr ""
+msgstr "Valor real d'actius: "
 
 #: src/Widgets/OperationsTable.vala:93 src/Widgets/OperationsTable.vala:101
 msgid " "
-msgstr ""
+msgstr " "
 
 #: src/Widgets/OperationsTable.vala:105
 msgid "Value"
-msgstr ""
+msgstr "Valor"
 
 #: src/Widgets/SettingsMenu.vala:36
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: src/Widgets/SettingsMenu.vala:42
 msgid "Light background"
-msgstr ""
+msgstr "Fons clar"
 
 #: src/Widgets/SettingsMenu.vala:43
 msgid "Dark background"
-msgstr ""
+msgstr "Fons fosc"
